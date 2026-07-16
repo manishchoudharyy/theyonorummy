@@ -5,6 +5,8 @@ import dbConnect from "../../lib/db";
 import App from "../../models/App";
 import AppCard from "../../components/AppCard";
 import FaqAccordion from "../../components/FaqAccordion";
+import LegalAlert from "../../components/LegalAlert";
+import PlatformDisclaimer from "../../components/PlatformDisclaimer";
 import Footer from "../../components/Footer";
 
 const getApp = cache(async (slug) => {
@@ -200,7 +202,8 @@ export default async function AppPage({ params }) {
             Left  → Logo + Download CTA + Bonus pill + Rating
             Right → Spec table
         ══════════════════════════════════════════════════════ */}
-        <div className="mt-4 grid grid-cols-2 gap-3">
+        <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-3">
+        <div className="grid grid-cols-2 gap-3">
 
           {/* ── COL 1: Logo + CTA ── */}
           <div className="flex flex-col gap-2.5">
@@ -240,7 +243,7 @@ export default async function AppPage({ params }) {
           {/* ── COL 2: Rating + Spec Table ── */}
           <div className="flex flex-col gap-3">
             {/* Rating */}
-            <div className="flex flex-col gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2.5">
+            <div className="flex flex-col gap-1 rounded-xl border border-slate-100 px-3 py-2.5">
               <StarRating rating={app.rating} />
               <div className="flex items-baseline gap-1">
                 <span className="text-base font-extrabold text-slate-900">
@@ -252,7 +255,7 @@ export default async function AppPage({ params }) {
             </div>
 
             {/* Spec table */}
-            <div className="rounded-2xl border border-slate-200 bg-white px-3 py-0.5 h-fit">
+            <div className="rounded-2xl border border-slate-100 px-3 py-0.5 h-fit">
               {[
                 ["Signup Bonus", app.bonus],
                 ["Min. Withdraw", `₹${app.minWithdraw}`],
@@ -275,59 +278,67 @@ export default async function AppPage({ params }) {
             </div>
           </div>
         </div>
+        </div>
 
         {/* ══════════ SEO CONTENT ══════════ */}
-        {app.content?.description && (
-          <article className="mt-8">
-            <h2 className="mb-3 text-lg font-bold text-slate-900">
-              About {app.name}
-            </h2>
-            <div
-              className={proseClasses}
-              dangerouslySetInnerHTML={{ __html: app.content.description }}
-            />
-          </article>
-        )}
+        {(app.content?.description ||
+          app.content?.whyChoose ||
+          app.content?.howToDownload ||
+          app.content?.additionalInfo) && (
+          <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-4">
+            {app.content?.description && (
+              <article>
+                <h2 className="mb-3 text-lg font-bold text-slate-900">
+                  About {app.name}
+                </h2>
+                <div
+                  className={proseClasses}
+                  dangerouslySetInnerHTML={{ __html: app.content.description }}
+                />
+              </article>
+            )}
 
-        {app.content?.whyChoose && (
-          <article className="mt-6">
-            <h2 className="mb-3 text-lg font-bold text-slate-900">
-              Why Choose {app.name}?
-            </h2>
-            <div
-              className={proseClasses}
-              dangerouslySetInnerHTML={{ __html: app.content.whyChoose }}
-            />
-          </article>
-        )}
+            {app.content?.whyChoose && (
+              <article className="mt-6">
+                <h2 className="mb-3 text-lg font-bold text-slate-900">
+                  Why Choose {app.name}?
+                </h2>
+                <div
+                  className={proseClasses}
+                  dangerouslySetInnerHTML={{ __html: app.content.whyChoose }}
+                />
+              </article>
+            )}
 
-        {app.content?.howToDownload && (
-          <article className="mt-6">
-            <h2 className="mb-3 text-lg font-bold text-slate-900">
-              How To Download {app.name}
-            </h2>
-            <div
-              className={proseClasses}
-              dangerouslySetInnerHTML={{ __html: app.content.howToDownload }}
-            />
-          </article>
-        )}
+            {app.content?.howToDownload && (
+              <article className="mt-6">
+                <h2 className="mb-3 text-lg font-bold text-slate-900">
+                  How To Download {app.name}
+                </h2>
+                <div
+                  className={proseClasses}
+                  dangerouslySetInnerHTML={{ __html: app.content.howToDownload }}
+                />
+              </article>
+            )}
 
-        {app.content?.additionalInfo && (
-          <article className="mt-6">
-            <h2 className="mb-3 text-lg font-bold text-slate-900">
-              Additional Info
-            </h2>
-            <div
-              className={proseClasses}
-              dangerouslySetInnerHTML={{ __html: app.content.additionalInfo }}
-            />
-          </article>
+            {app.content?.additionalInfo && (
+              <article className="mt-6">
+                <h2 className="mb-3 text-lg font-bold text-slate-900">
+                  Additional Info
+                </h2>
+                <div
+                  className={proseClasses}
+                  dangerouslySetInnerHTML={{ __html: app.content.additionalInfo }}
+                />
+              </article>
+            )}
+          </div>
         )}
 
         {/* ══════════ RELATED APPS ══════════ */}
         {relatedApps.length > 0 && (
-          <section className="mt-8">
+          <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-4">
             <h2 className="mb-4 text-lg font-bold text-slate-900">
               Related Apps
             </h2>
@@ -348,6 +359,12 @@ export default async function AppPage({ params }) {
             <FaqAccordion faqs={app.faq} />
           </section>
         )}
+
+        {/* ══════════ LEGAL & DISCLAIMER ══════════ */}
+        <div className="mt-8 flex flex-col gap-4 pb-4">
+          <LegalAlert />
+          <PlatformDisclaimer />
+        </div>
       </main>
 
       {/* ══════════ STICKY BOTTOM BAR — mobile only ══════════ */}

@@ -36,33 +36,13 @@ export default async function HomePage() {
       <main className="mx-auto max-w-6xl px-4">
         {/* ================= Trust Hero ================= */}
         <section className="mt-4 rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-teal-50 to-blue-50 p-5 lg:p-8">
-          <span className="inline-flex rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-emerald-600">
-            ✓ Verified Referral Links
-          </span>
-          <h1 className="mt-3 text-xl font-bold leading-tight lg:text-3xl">
-            Best Rummy &amp; Earning Apps
+          <h1 className="text-xl font-bold leading-tight lg:text-3xl">
+            Yono Rummy Apps - Yono Games
           </h1>
           <p className="mt-2 max-w-xl text-[13px] leading-relaxed text-slate-600 lg:text-sm">
-            Hand-reviewed apps with verified sign-up bonuses and safe referral
-            links. Compare ratings and minimum withdrawal before you download.
+            Download all yono games and get bonus upto 51₹ to 299₹. Download
+            latest yono rummy games.
           </p>
-          <dl className="mt-4 grid grid-cols-3 gap-2 lg:max-w-md">
-            {[
-              [`${apps.length}+`, "Apps Listed"],
-              ["₹51+", "Signup Bonus"],
-              ["100%", "Verified Links"],
-            ].map(([value, label]) => (
-              <div
-                key={label}
-                className="rounded-xl bg-white px-2 py-2.5 text-center"
-              >
-                <dd className="text-base font-bold text-emerald-600">{value}</dd>
-                <dt className="text-[10px] font-medium text-slate-500">
-                  {label}
-                </dt>
-              </div>
-            ))}
-          </dl>
         </section>
 
         {/* ================= Category Pills ================= */}
@@ -74,13 +54,7 @@ export default async function HomePage() {
         <div className="mt-4 flex flex-col gap-8 pb-10 lg:flex-row">
           <section className="min-w-0 flex-1">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-bold">Top Rated Apps</h2>
-              <Link
-                href="/"
-                className="text-[13px] font-semibold text-blue-600 hover:underline"
-              >
-                See all →
-              </Link>
+              <h2 className="text-lg font-bold">All Yono Games</h2>
             </div>
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
               {apps.map((app) => (

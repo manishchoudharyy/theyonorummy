@@ -10,6 +10,11 @@
     "seed": "node --env-file=.env.local scripts/seedApps.mjs"
   },
   "dependencies": {
+    "@tiptap/extension-link": "^3.28.0",
+    "@tiptap/extension-underline": "^3.28.0",
+    "@tiptap/pm": "^3.28.0",
+    "@tiptap/react": "^3.28.0",
+    "@tiptap/starter-kit": "^3.28.0",
     "mongoose": "^9.7.4",
     "next": "15.0.0",
     "react": "19.0.0-rc-65a56d0e-20241020",

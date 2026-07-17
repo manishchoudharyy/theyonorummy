@@ -108,49 +108,35 @@ export default async function HomePage({ searchParams }) {
         </section>
 
         {/* ================= SEO Info Block ================= */}
-        <section className="mb-10 rounded-2xl border border-slate-200 bg-white p-5 lg:p-8">
-          <h2 className="text-lg font-bold text-slate-900 lg:text-xl">
-            About Real-Money Rummy &amp; Earning Apps
-          </h2>
-          <p className="mt-2 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
-            TheYonoRummy lists real-money rummy and card-game apps from the
-            Yono Games network. Every listing below is checked before
-            publishing — here&apos;s what that means in practice.
-          </p>
+<section className="mb-10 rounded-2xl border border-slate-200 bg-white p-5 lg:p-8">
+  <h2 className="text-xl font-extrabold tracking-tight text-slate-900 lg:text-2xl">
+    All Yono Games Hub — Features, Bonus & Verified Links
+  </h2>
+  <p className="mt-3 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
+    Agar aap internet par latest yono games ya unke verified application files dhoond rahe hain, toh aap bilkul sahi jagah aaye hain. Is directory par humne all yono games ko ek hi jagah list kiya hai taaki aapko alag-alag websites par bhatakna na pade. Har ek application ka withdrawal speed aur loading metrics personally test karne ke baad hi yahan index kiya jata hai.
+  </p>
 
-          <h3 className="mt-5 text-sm font-bold text-slate-900">
-            Signup Bonuses &amp; Minimum Withdrawal
-          </h3>
-          <p className="mt-1.5 text-[13px] leading-relaxed text-slate-600">
-            Most apps in this directory offer a one-time signup bonus
-            ranging from ₹51 to ₹500 upon registration. Minimum withdrawal
-            amounts are typically ₹100 and are processed via UPI or bank
-            transfer. Bonus amounts and withdrawal terms are set by each
-            individual app and can change without notice — always check the
-            current terms inside the app before playing.
-          </p>
+  <h3 className="mt-6 text-base font-bold text-slate-900">
+    Yono Rummy aur Slots Apps me kitna Bonus milta hai?
+  </h3>
+  <p className="mt-2 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
+    Jab aap is list se koi bhi yono rummy ya popular yono slots apps download karte hain, toh aapko registration ke time ₹51 se lekar ₹500 tak ka instant sign-up bonus dekhne ko mil sakta hai. In sabhi variants me minimum withdrawal limit standard ₹100 rakhi gayi hai, jise aap direct apne UPI id ya bank account me secure transfer kar sakte hain. Halanki, sabhi game operators apne rules time-to-time change karte rehte hain, isliye download karne ke baad official terms zaroor check karein.
+  </p>
 
-          <h3 className="mt-4 text-sm font-bold text-slate-900">
-            Verified Referral Tracking
-          </h3>
-          <p className="mt-1.5 text-[13px] leading-relaxed text-slate-600">
-            Every download link on this site routes through a tracked
-            referral redirect. This confirms the link you click points to
-            the app&apos;s official server rather than an unverified or
-            forwarded APK file, and lets us keep listings current.
-          </p>
+  <h3 className="mt-5 text-base font-bold text-slate-900">
+    Yono 777 aur New Yono Games kaise download karein?
+  </h3>
+  <p className="mt-2 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
+    Market me aane waale har ek premium arcade launch jaise yono 777 aur baaki sabhi new yono games ke safe redirect links yahan available hain. Hum direct official tracking nodes aur secure servers ka use karte hain taaki aapko koi corrupted ya unverified third-party APK file na mile. Humare system me direct updates integrated hain, jisse jab bhi koi naya update aayega, aapko hamesha secure working versions hi milenge.
+  </p>
 
-          <h3 className="mt-4 text-sm font-bold text-slate-900">
-            Play Responsibly
-          </h3>
-          <p className="mt-1.5 text-[13px] leading-relaxed text-slate-600">
-            Real-money rummy carries financial risk and can be
-            habit-forming. Set a budget before you play, avoid chasing
-            losses, and stop if it stops being fun. Rummy is restricted or
-            banned in some Indian states — confirm your local regulations
-            before downloading.
-          </p>
-        </section>
+  <h3 className="mt-5 text-base font-bold text-slate-900">
+    Zaroori Soochna aur Gaming Rules
+  </h3>
+  <p className="mt-2 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
+    Real-money mobile gaming me financial risk hota hai aur iski aadat bhi lag sakti hai. Hamesha ek limited budget set karke hi khele aur kabhi bhi losses ko recover karne ke liye dimaag kharab na karein. Bharat ke kuch states me real-money card games par legal restrictions hain, isliye download karne se pehle apne local laws aur state guidelines ko zaroor check kar lein.
+  </p>
+</section>
       </main>
 
       {/* ================= Footer ================= */}

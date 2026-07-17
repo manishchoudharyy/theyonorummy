@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import StarRating from "./StarRating";
 
 export default function AppCard({ app }) {
   return (
@@ -21,21 +22,26 @@ export default function AppCard({ app }) {
           alt={app.name}
           fill
           sizes="(max-width: 768px) 50vw, (max-width: 1280px) 25vw, 20vw"
-          className="object-contain p-3 transition duration-300 group-hover:scale-105"
+          className="object-contain p-5 transition duration-300 group-hover:scale-105"
         />
       </div>
 
       {/* ── Card body ── */}
-      <div className="flex flex-col gap-1.5 px-3 pb-3 pt-3">
+      <div className="flex flex-col gap-1.5 px-2 pb-3 pt-3">
         {/* App name */}
-        <h3 className="truncate text-[15px] font-bold text-slate-900">
+        <h3 className="truncate text-[15px] font-bold text-slate-900 text-center">
           {app.name}
         </h3>
 
-        {/* Rating + size */}
-        <p className="text-xs font-medium text-slate-500">
-          {app.bonus} Bonus · {app.rating.toFixed(1)}★
+        {/* Signup bonus */}
+        <p className="text-center text-xs font-semibold text-emerald-600">
+          {app.bonus} Bonus
         </p>
+
+        {/* Star rating */}
+        <div className="flex justify-center">
+          <StarRating rating={app.rating} size="h-3.5 w-3.5" />
+        </div>
 
         {/* Download button */}
         <span className="mt-1 inline-flex h-12 w-full items-center justify-center rounded-xl bg-emerald-500 text-[15px] font-semibold text-white transition group-hover:bg-emerald-600">

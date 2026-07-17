@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import dbConnect from "../../lib/db";
 import App from "../../models/App";
 import AppCard from "../../components/AppCard";
+import StarRating from "../../components/StarRating";
 import FaqAccordion from "../../components/FaqAccordion";
 import LegalAlert from "../../components/LegalAlert";
 import PlatformDisclaimer from "../../components/PlatformDisclaimer";
@@ -35,40 +36,6 @@ function formatDate(date) {
     month: "short",
     year: "numeric",
   });
-}
-
-function StarRating({ rating }) {
-  return (
-    <div className="flex gap-0.5">
-      {[1, 2, 3, 4, 5].map((s) => {
-        const full = s <= Math.floor(rating);
-        const half = !full && s === Math.ceil(rating) && rating % 1 >= 0.5;
-        return (
-          <svg key={s} viewBox="0 0 20 20" className="h-4 w-4">
-            {half ? (
-              <>
-                <defs>
-                  <linearGradient id={`h${s}`}>
-                    <stop offset="50%" stopColor="#FBBF24" />
-                    <stop offset="50%" stopColor="#E2E8F0" />
-                  </linearGradient>
-                </defs>
-                <path
-                  fill={`url(#h${s})`}
-                  d="M10 1l2.4 5 5.6.8-4 3.9.9 5.5L10 13.5l-4.9 2.7.9-5.5L2 6.8l5.6-.8z"
-                />
-              </>
-            ) : (
-              <path
-                fill={full ? "#FBBF24" : "#E2E8F0"}
-                d="M10 1l2.4 5 5.6.8-4 3.9.9 5.5L10 13.5l-4.9 2.7.9-5.5L2 6.8l5.6-.8z"
-              />
-            )}
-          </svg>
-        );
-      })}
-    </div>
-  );
 }
 
 const proseClasses =
@@ -265,7 +232,7 @@ export default async function AppPage({ params }) {
                 ["Min. Withdraw", `₹${app.minWithdraw}`],
                 ["Size", app.appSize],
                 ["Downloads", app.downloads],
-                ["Updated", formatDate(app.lastUpdated)],
+                ["Version", app.version || "1.0.0"],
               ].map(([label, value]) => (
                 <div
                   key={label}
@@ -293,7 +260,7 @@ export default async function AppPage({ params }) {
             {app.content?.description && (
               <article>
                 <h2 className="mb-3 text-lg font-bold text-slate-900">
-                  About {app.name}
+                  Description
                 </h2>
                 <div
                   className={proseClasses}

@@ -97,6 +97,11 @@ const AppSchema = new Schema({
     type: String,
     required: true,
   },
+  version: {
+    type: String,
+    default: '1.0.0',
+    trim: true,
+  },
   rating: {
     type: Number,
     required: true,
@@ -140,9 +145,8 @@ const AppSchema = new Schema({
 });
 
 // Auto-update lastUpdated on every save (e.g. admin panel edits)
-AppSchema.pre('save', function (next) {
+AppSchema.pre('save', function () {
   this.lastUpdated = Date.now();
-  next();
 });
 
 export default mongoose.models.App || mongoose.model('App', AppSchema);

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function AppCard({ app }) {
   return (
@@ -13,13 +14,14 @@ export default function AppCard({ app }) {
         </span>
       )}
 
-      {/* ── Full-width image banner ── */}
-      <div className="relative h-32 w-full overflow-hidden bg-slate-100">
-        <img
+      {/* ── Square image banner (1:1) ── */}
+      <div className="relative aspect-square w-full overflow-hidden bg-slate-100">
+        <Image
           src={app.logo}
           alt={app.name}
-          loading="lazy"
-          className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+          fill
+          sizes="(max-width: 768px) 50vw, (max-width: 1280px) 25vw, 20vw"
+          className="object-contain p-3 transition duration-300 group-hover:scale-105"
         />
       </div>
 
@@ -32,7 +34,7 @@ export default function AppCard({ app }) {
 
         {/* Rating + size */}
         <p className="text-xs font-medium text-slate-500">
-          {app.rating.toFixed(1)} ★&nbsp;&nbsp;|&nbsp;&nbsp;{app.appSize}
+          {app.bonus} Bonus · {app.rating.toFixed(1)}★
         </p>
 
         {/* Download button */}

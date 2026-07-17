@@ -130,7 +130,11 @@ export default async function AppPage({ params }) {
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
           <Link href="/" className="flex items-center gap-2">
-            <span className="h-7 w-7 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600" />
+            <img
+              src="/logo.webp"
+              alt="TheYonoRummy"
+              className="h-7 w-7 rounded-lg object-cover"
+            />
             <span className="text-base font-bold text-slate-900">TheYonoRummy</span>
           </Link>
           <Link
@@ -152,7 +156,7 @@ export default async function AppPage({ params }) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-4 pb-28 lg:pb-10">
+      <main className="mx-auto max-w-5xl px-2 pb-2 lg:pb-10">
 
         {/* ══════════ BREADCRUMB ══════════ */}
         <nav
@@ -208,12 +212,12 @@ export default async function AppPage({ params }) {
           {/* ── COL 1: Logo + CTA ── */}
           <div className="flex flex-col gap-2.5">
 
-            {/* Logo */}
-            <div className="w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
+            {/* Logo (1:1) */}
+            <div className="mx-auto aspect-square w-32 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 sm:w-40">
               <img
                 src={app.logo}
                 alt={`${app.name} APK`}
-                className="h-40 w-full object-cover sm:h-52"
+                className="h-full w-full object-contain p-2"
               />
             </div>
 
@@ -338,11 +342,11 @@ export default async function AppPage({ params }) {
 
         {/* ══════════ RELATED APPS ══════════ */}
         {relatedApps.length > 0 && (
-          <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-4">
+          <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-2">
             <h2 className="mb-4 text-lg font-bold text-slate-900">
               Related Apps
             </h2>
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
               {relatedApps.map((relatedApp) => (
                 <AppCard key={relatedApp.slug} app={relatedApp} />
               ))}

@@ -4,16 +4,11 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const navLinks = [
-  { label: "All Apps", href: "/" },
-  { label: "Games", href: "/" },
-  { label: "Tools", href: "/" },
-  { label: "New Arrivals", href: "/" },
-  { label: "Trending", href: "/" },
-  { label: "About", href: "/" },
-  { label: "Submit an App", href: "/" },
+  { label: "All Yono Games", href: "/" },
+  { label: "Yono Rummy", href: "/" },
+  { label: "Yono Slots", href: "/" },
+  { label: "Yono 777", href: "/" },
 ];
-
-const categories = ["All", "Games", "Tools", "New", "Trending"];
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -42,11 +37,12 @@ export default function Header() {
               href="/"
               className="flex items-center gap-2 rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
             >
-              <span
-                aria-hidden
-                className="h-8 w-8 rounded-[10px] bg-gradient-to-br from-emerald-400 to-emerald-600"
+              <img
+                src="/logo.webp"
+                alt="The Yono Rummy"
+                className="h-8 w-8 rounded-[10px] object-cover"
               />
-              <span className="text-lg font-bold text-slate-900">TheYonoRummy</span>
+              <span className="text-lg font-bold text-slate-900">The Yono Rummy</span>
             </Link>
 
             {/* Hamburger — mobile only */}
@@ -64,7 +60,11 @@ export default function Header() {
           </div>
 
           {/* Search bar */}
-          <label className="flex cursor-text items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-4 py-3.5 shadow-[0_2px_10px_rgba(15,23,42,0.08)] transition focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-100 lg:w-96 lg:py-2.5">
+          <form
+            action="/"
+            method="GET"
+            className="flex cursor-text items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-4 py-3.5 shadow-[0_2px_10px_rgba(15,23,42,0.08)] transition focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-100 lg:w-96 lg:py-2.5"
+          >
             <svg
               aria-hidden
               viewBox="0 0 18 18"
@@ -78,22 +78,19 @@ export default function Header() {
             </svg>
             <input
               type="search"
-              placeholder="Search 70+ verified open-source apps…"
+              name="q"
+              placeholder="Search verified all yono games..."
               className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
             />
-          </label>
+          </form>
 
           {/* Desktop nav */}
           <nav className="hidden items-center gap-6 text-sm font-medium text-slate-600 lg:flex">
-            <Link href="/" className="hover:text-slate-900">Games</Link>
-            <Link href="/" className="hover:text-slate-900">Tools</Link>
-            <Link href="/" className="hover:text-slate-900">About</Link>
-            <Link
-              href="/"
-              className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600"
-            >
-              Submit App
-            </Link>
+            {navLinks.map(({ label, href }) => (
+              <Link key={label} href={href} className="hover:text-slate-900">
+                {label}
+              </Link>
+            ))}
           </nav>
         </div>
       </header>
@@ -126,11 +123,12 @@ export default function Header() {
             onClick={() => setOpen(false)}
             className="flex items-center gap-2"
           >
-            <span
-              aria-hidden
-              className="h-8 w-8 rounded-[10px] bg-gradient-to-br from-emerald-400 to-emerald-600"
+            <img
+              src="/logo.webp"
+              alt="TheYonoRummy"
+              className="h-8 w-8 rounded-[10px] object-cover"
             />
-            <span className="text-lg font-bold text-slate-900">FOSSHub</span>
+            <span className="text-lg font-bold text-slate-900">The Yono Rummy</span>
           </Link>
 
           {/* Close button */}
@@ -152,45 +150,6 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Drawer search */}
-        <div className="px-4 pt-4">
-          <label className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-100">
-            <svg
-              aria-hidden
-              viewBox="0 0 18 18"
-              className="h-4 w-4 shrink-0 stroke-slate-400"
-              fill="none"
-              strokeWidth="2"
-              strokeLinecap="round"
-            >
-              <circle cx="8" cy="8" r="6" />
-              <path d="M12.5 12.5L17 17" />
-            </svg>
-            <input
-              type="search"
-              placeholder="Search apps…"
-              className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
-            />
-          </label>
-        </div>
-
-        {/* Category pills */}
-        <div className="scrollbar-none mt-4 flex gap-2 overflow-x-auto px-4">
-          {categories.map((c, i) => (
-            <button
-              key={c}
-              onClick={() => setOpen(false)}
-              className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition ${
-                i === 0
-                  ? "bg-emerald-500 text-white"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-              }`}
-            >
-              {c}
-            </button>
-          ))}
-        </div>
-
         {/* Nav links */}
         <nav className="mt-4 flex flex-col px-3">
           <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
@@ -207,25 +166,6 @@ export default function Header() {
             </Link>
           ))}
         </nav>
-
-        {/* Trust strip at bottom */}
-        <div className="mt-auto border-t border-slate-200 bg-slate-50 px-5 py-5">
-          <div className="flex items-center justify-between">
-            {[["70+", "Apps"], ["100%", "Free"], ["0", "Ads"]].map(([val, label]) => (
-              <div key={label} className="text-center">
-                <p className="text-sm font-bold text-emerald-600">{val}</p>
-                <p className="text-[10px] font-medium text-slate-400">{label}</p>
-              </div>
-            ))}
-          </div>
-          <Link
-            href="/"
-            onClick={() => setOpen(false)}
-            className="mt-4 flex h-11 w-full items-center justify-center rounded-xl bg-emerald-500 text-sm font-semibold text-white hover:bg-emerald-600"
-          >
-            Submit an App
-          </Link>
-        </div>
       </aside>
     </>
   );

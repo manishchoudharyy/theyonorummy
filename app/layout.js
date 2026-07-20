@@ -13,6 +13,7 @@ const geistMono = localFont({
 });
 
 export const metadata = {
+  metadataBase: new URL("https://theyonorummy.com"),
   title: "TheYonoRummy — Best Rummy & Earning Apps Directory",
   description:
     "Hand-reviewed rummy and earning apps with verified referral bonuses. Compare ratings, bonuses, and minimum withdrawal before you download.",

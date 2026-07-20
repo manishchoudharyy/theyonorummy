@@ -1,6 +1,6 @@
 export default function PlatformDisclaimer() {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4">
+    <section className="border border-slate-200 bg-white p-4">
       <h2 className="text-sm font-bold text-slate-900">
         Platform Disclaimer
       </h2>

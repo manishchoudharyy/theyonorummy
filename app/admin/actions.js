@@ -1,6 +1,8 @@
 "use server";
 
 import crypto from "crypto";
+import fs from "fs/promises";
+import path from "path";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
@@ -45,7 +47,22 @@ export async function logoutAction() {
   redirect("/admin/login");
 }
 
-function parseAppFormData(formData) {
+async function saveLogoFile(file, slug) {
+  const safeSlug = slug.replace(/[^a-z0-9-]/g, "") || "app";
+  const ext = (file.name.split(".").pop() || "webp")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "") || "webp";
+  const filename = `${safeSlug}.${ext}`;
+
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const dir = path.join(process.cwd(), "public", "icons");
+  await fs.mkdir(dir, { recursive: true });
+  await fs.writeFile(path.join(dir, filename), buffer);
+
+  return `/icons/${filename}`;
+}
+
+async function parseAppFormData(formData) {
   const categories = String(formData.get("categories") || "")
     .split(",")
     .map((c) => c.trim().toLowerCase())
@@ -56,25 +73,26 @@ function parseAppFormData(formData) {
     .map((k) => k.trim())
     .filter(Boolean);
 
-  const faqQuestions = formData.getAll("faqQuestion");
-  const faqAnswers = formData.getAll("faqAnswer");
-  const faq = faqQuestions
-    .map((question, i) => ({
-      question: String(question).trim(),
-      answer: String(faqAnswers[i] || "").trim(),
-    }))
-    .filter((f) => f.question && f.answer);
+  const slug = String(formData.get("slug") || "").trim().toLowerCase();
+
+  let logo = String(formData.get("logo") || "").trim();
+  const logoFile = formData.get("logoFile");
+  if (logoFile instanceof File && logoFile.size > 0) {
+    logo = await saveLogoFile(logoFile, slug);
+  }
 
   return {
     name: String(formData.get("name") || "").trim(),
-    slug: String(formData.get("slug") || "").trim().toLowerCase(),
-    logo: String(formData.get("logo") || "").trim(),
+    appTitle: String(formData.get("appTitle") || "").trim(),
+    slug,
+    logo,
     categories,
     bonus: String(formData.get("bonus") || "₹51").trim(),
     minWithdraw: Number(formData.get("minWithdraw")) || 100,
     appSize: String(formData.get("appSize") || "").trim(),
     version: String(formData.get("version") || "1.0.0").trim(),
     rating: Number(formData.get("rating")) || 0,
+    ratingCount: Number(formData.get("ratingCount")) || 5000,
     downloads: String(formData.get("downloads") || "").trim(),
     isNewApp: formData.get("isNewApp") === "on",
     isTrending: formData.get("isTrending") === "on",
@@ -86,7 +104,6 @@ function parseAppFormData(formData) {
       howToDownload: String(formData.get("howToDownload") || "").trim(),
       additionalInfo: String(formData.get("additionalInfo") || "").trim(),
     },
-    faq,
     seo: {
       metaTitle: String(formData.get("metaTitle") || "").trim(),
       metaDescription: String(formData.get("metaDescription") || "").trim(),
@@ -97,7 +114,7 @@ function parseAppFormData(formData) {
 
 export async function createApp(formData) {
   await dbConnect();
-  const data = parseAppFormData(formData);
+  const data = await parseAppFormData(formData);
 
   let created;
   try {
@@ -116,7 +133,7 @@ export async function createApp(formData) {
 
 export async function updateApp(id, formData) {
   await dbConnect();
-  const data = parseAppFormData(formData);
+  const data = await parseAppFormData(formData);
   data.lastUpdated = new Date();
 
   try {

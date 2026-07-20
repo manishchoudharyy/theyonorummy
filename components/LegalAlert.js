@@ -11,7 +11,7 @@ const bannedStates = [
 
 export default function LegalAlert() {
   return (
-    <section className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+    <section className="border border-amber-200 bg-amber-50 p-4">
       <div className="flex items-start gap-2.5">
         <svg
           aria-hidden="true"

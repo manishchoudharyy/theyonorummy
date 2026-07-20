@@ -2,22 +2,6 @@ import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 
-const FaqSchema = new Schema(
-  {
-    question: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    answer: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-  },
-  { _id: false }
-);
-
 const ContentSchema = new Schema(
   {
     description: {
@@ -69,6 +53,11 @@ const AppSchema = new Schema({
     required: true,
     trim: true,
   },
+  appTitle: {
+    type: String,
+    trim: true,
+    default: '',
+  },
   slug: {
     type: String,
     required: true,
@@ -106,6 +95,10 @@ const AppSchema = new Schema({
     type: Number,
     required: true,
   },
+  ratingCount: {
+    type: Number,
+    default: 5000,
+  },
   downloads: {
     type: String,
     required: true,
@@ -129,10 +122,6 @@ const AppSchema = new Schema({
   content: {
     type: ContentSchema,
     default: () => ({}),
-  },
-  faq: {
-    type: [FaqSchema],
-    default: [],
   },
   seo: {
     type: SeoSchema,

@@ -1,5 +1,9 @@
 import { loginAction } from "../actions";
 
+export const metadata = {
+  robots: { index: false, follow: false },
+};
+
 export default async function AdminLoginPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
   const hasError = resolvedSearchParams?.error === "1";

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
@@ -25,7 +25,10 @@ function ToolbarButton({ onClick, active, disabled, label, children }) {
   );
 }
 
-export default function RichTextEditor({ name, label, defaultValue = "" }) {
+const RichTextEditor = forwardRef(function RichTextEditor(
+  { name, label, defaultValue = "" },
+  ref
+) {
   const [html, setHtml] = useState(defaultValue);
 
   const editor = useEditor({
@@ -43,6 +46,17 @@ export default function RichTextEditor({ name, label, defaultValue = "" }) {
       },
     },
   });
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      setContent: (newHtml) => {
+        editor?.commands.setContent(newHtml);
+        setHtml(newHtml);
+      },
+    }),
+    [editor]
+  );
 
   const setLink = () => {
     if (!editor) return;
@@ -142,10 +156,12 @@ export default function RichTextEditor({ name, label, defaultValue = "" }) {
         </div>
         <EditorContent
           editor={editor}
-          className="prose prose-sm max-w-none bg-white [&_.ProseMirror]:min-h-[160px] [&_.ProseMirror_h3]:text-base [&_.ProseMirror_h3]:font-bold [&_.ProseMirror_ul]:list-disc [&_.ProseMirror_ul]:pl-5 [&_.ProseMirror_ol]:list-decimal [&_.ProseMirror_ol]:pl-5 [&_.ProseMirror_a]:text-blue-600 [&_.ProseMirror_a]:underline"
+          className="prose prose-sm max-w-none bg-white font-normal [&_.ProseMirror]:min-h-[160px] [&_.ProseMirror]:font-normal [&_.ProseMirror_h3]:text-base [&_.ProseMirror_h3]:font-bold [&_.ProseMirror_ul]:list-disc [&_.ProseMirror_ul]:pl-5 [&_.ProseMirror_ol]:list-decimal [&_.ProseMirror_ol]:pl-5 [&_.ProseMirror_a]:text-blue-600 [&_.ProseMirror_a]:underline"
         />
       </div>
       <input type="hidden" name={name} value={html} readOnly />
     </div>
   );
-}
+});
+
+export default RichTextEditor;

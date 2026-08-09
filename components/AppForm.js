@@ -2,6 +2,7 @@
 
 import { forwardRef, useRef, useState } from "react";
 import RichTextEditor from "./RichTextEditor";
+import { generateAppContent } from "../app/admin/aiActions";
 
 const Field = forwardRef(function Field({ label, ...props }, ref) {
   return (
@@ -16,18 +17,19 @@ const Field = forwardRef(function Field({ label, ...props }, ref) {
   );
 });
 
-function TextArea({ label, rows = 4, ...props }) {
+const TextArea = forwardRef(function TextArea({ label, rows = 4, ...props }, ref) {
   return (
     <label className="flex flex-col gap-1 text-xs font-semibold text-slate-600">
       {label}
       <textarea
+        ref={ref}
         {...props}
         rows={rows}
         className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
       />
     </label>
   );
-}
+});
 
 function Checkbox({ label, ...props }) {
   return (
@@ -67,8 +69,18 @@ function randomRatingCount() {
 export default function AppForm({ action, initialData, errorMessage }) {
   const isEdit = Boolean(initialData);
 
+  const formRef = useRef(null);
   const slugRef = useRef(null);
   const slugTouchedRef = useRef(isEdit);
+  const descriptionRef = useRef(null);
+  const whyChooseRef = useRef(null);
+  const howToDownloadRef = useRef(null);
+  const additionalInfoRef = useRef(null);
+
+  const [aiLanguage, setAiLanguage] = useState("Hinglish");
+  const [aiNotes, setAiNotes] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState("");
 
   const [defaultAppSize] = useState(() => initialData?.appSize || randomAppSize());
   const [defaultDownloads] = useState(() => initialData?.downloads || randomDownloads());
@@ -89,8 +101,43 @@ export default function AppForm({ action, initialData, errorMessage }) {
     slugRef.current.value = slugify(e.target.value);
   };
 
+  const handleGenerate = async () => {
+    setAiError("");
+    const fd = new FormData(formRef.current);
+    const name = String(fd.get("name") || "").trim();
+    const bonus = String(fd.get("bonus") || "").trim();
+    const appSize = String(fd.get("appSize") || "").trim();
+    const minWithdraw = String(fd.get("minWithdraw") || "").trim();
+
+    if (!name || !bonus || !appSize) {
+      setAiError("Fill in App Name, Bonus, and App Size first.");
+      return;
+    }
+
+    setAiLoading(true);
+    const result = await generateAppContent({
+      name,
+      bonus,
+      appSize,
+      minWithdraw,
+      language: aiLanguage,
+      extraNotes: aiNotes,
+    });
+    setAiLoading(false);
+
+    if (!result.success) {
+      setAiError(result.error);
+      return;
+    }
+
+    descriptionRef.current?.setContent(result.data.description);
+    whyChooseRef.current?.setContent(result.data.whyChoose);
+    howToDownloadRef.current?.setContent(result.data.howToDownload);
+    additionalInfoRef.current?.setContent(result.data.additionalInfo);
+  };
+
   return (
-    <form action={action} className="flex flex-col gap-6">
+    <form ref={formRef} action={action} className="flex flex-col gap-6">
       {errorMessage && (
         <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
           {errorMessage}
@@ -226,23 +273,69 @@ export default function AppForm({ action, initialData, errorMessage }) {
       {/* Content */}
       <fieldset className="rounded-2xl border border-slate-200 bg-white p-4">
         <legend className="px-1 text-sm font-bold text-slate-900">Content</legend>
-        <div className="mt-2 flex flex-col gap-3">
+
+        {/* AI Generate panel */}
+        <div className="mt-2 flex flex-col gap-3 rounded-lg border border-emerald-200 bg-emerald-50/50 p-3">
+          <p className="text-xs font-semibold text-slate-900">
+            Generate with AI ✨
+          </p>
+          <div className="flex flex-wrap items-end gap-3">
+            <label className="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+              Language
+              <select
+                value={aiLanguage}
+                onChange={(e) => setAiLanguage(e.target.value)}
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
+              >
+                <option value="Hinglish">Hinglish</option>
+                <option value="English">English</option>
+              </select>
+            </label>
+            <div className="flex-1 min-w-[200px]">
+              <Field
+                label="Extra Notes / Unique Features (optional)"
+                value={aiNotes}
+                onChange={(e) => setAiNotes(e.target.value)}
+                placeholder="e.g. has Ludo and Aviator too"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={handleGenerate}
+              disabled={aiLoading}
+              className="h-9 rounded-lg bg-emerald-500 px-4 text-xs font-bold text-white hover:bg-emerald-600 disabled:opacity-60"
+            >
+              {aiLoading ? "Generating…" : "Generate"}
+            </button>
+          </div>
+          {aiError && <p className="text-xs font-medium text-red-600">{aiError}</p>}
+          <p className="text-[11px] font-normal text-slate-500">
+            Fills in Description, Why Choose, How To Download, and Additional Info below —
+            review and edit before saving.
+          </p>
+        </div>
+
+        <div className="mt-3 flex flex-col gap-3">
           <RichTextEditor
+            ref={descriptionRef}
             label="Description"
             name="description"
             defaultValue={initialData?.content?.description}
           />
-          <TextArea
+          <RichTextEditor
+            ref={whyChooseRef}
             label="Why Choose"
             name="whyChoose"
             defaultValue={initialData?.content?.whyChoose}
           />
-          <TextArea
+          <RichTextEditor
+            ref={howToDownloadRef}
             label="How To Download"
             name="howToDownload"
             defaultValue={initialData?.content?.howToDownload}
           />
-          <TextArea
+          <RichTextEditor
+            ref={additionalInfoRef}
             label="Additional Info"
             name="additionalInfo"
             defaultValue={initialData?.content?.additionalInfo}

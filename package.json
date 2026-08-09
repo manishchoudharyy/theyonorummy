@@ -10,6 +10,7 @@
     "seed": "node --env-file=.env.local scripts/seedApps.mjs"
   },
   "dependencies": {
+    "@google/genai": "^2.16.0",
     "@tiptap/extension-link": "^3.28.0",
     "@tiptap/extension-underline": "^3.28.0",
     "@tiptap/pm": "^3.28.0",

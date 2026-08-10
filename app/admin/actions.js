@@ -113,16 +113,18 @@ async function parseAppFormData(formData) {
 }
 
 export async function createApp(formData) {
-  await dbConnect();
-  const data = await parseAppFormData(formData);
-
   let created;
   try {
+    await dbConnect();
+    const data = await parseAppFormData(formData);
+
     const lastApp = await App.findOne({}).sort({ position: -1 }).lean();
     data.position = lastApp ? lastApp.position + 1 : 1;
     data.lastUpdated = new Date();
     created = await App.create(data);
   } catch (error) {
+    if (error?.digest?.startsWith("NEXT_REDIRECT")) throw error;
+    console.error("createApp failed:", error);
     redirect(`/admin/apps/new?error=${encodeURIComponent(error.message)}`);
   }
 
@@ -132,13 +134,16 @@ export async function createApp(formData) {
 }
 
 export async function updateApp(id, formData) {
-  await dbConnect();
-  const data = await parseAppFormData(formData);
-  data.lastUpdated = new Date();
-
+  let data;
   try {
+    await dbConnect();
+    data = await parseAppFormData(formData);
+    data.lastUpdated = new Date();
+
     await App.findByIdAndUpdate(id, data, { runValidators: true });
   } catch (error) {
+    if (error?.digest?.startsWith("NEXT_REDIRECT")) throw error;
+    console.error("updateApp failed:", error);
     redirect(`/admin/apps/${id}?error=${encodeURIComponent(error.message)}`);
   }
 

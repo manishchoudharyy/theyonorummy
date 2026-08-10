@@ -76,6 +76,9 @@ export default function AppForm({ action, initialData, errorMessage }) {
   const keyHighlightsRef = useRef(null);
   const howToDownloadRef = useRef(null);
   const howToClaimBonusRef = useRef(null);
+  const metaTitleRef = useRef(null);
+  const metaDescriptionRef = useRef(null);
+  const keywordsRef = useRef(null);
 
   const [aiLanguage, setAiLanguage] = useState("Hinglish");
   const [aiNotes, setAiNotes] = useState("");
@@ -134,6 +137,12 @@ export default function AppForm({ action, initialData, errorMessage }) {
     keyHighlightsRef.current?.setContent(result.data.keyHighlights);
     howToDownloadRef.current?.setContent(result.data.howToDownload);
     howToClaimBonusRef.current?.setContent(result.data.howToClaimBonus);
+
+    if (metaTitleRef.current) metaTitleRef.current.value = result.data.metaTitle;
+    if (metaDescriptionRef.current) {
+      metaDescriptionRef.current.value = result.data.metaDescription;
+    }
+    if (keywordsRef.current) keywordsRef.current.value = result.data.metaKeywords;
   };
 
   return (
@@ -310,8 +319,9 @@ export default function AppForm({ action, initialData, errorMessage }) {
           </div>
           {aiError && <p className="text-xs font-medium text-red-600">{aiError}</p>}
           <p className="text-[11px] font-normal text-slate-500">
-            Fills in Description, Key Highlights, How To Download, and How To Claim Bonus
-            below — review and edit before saving.
+            Fills in Description, Key Highlights, How To Download, How To Claim Bonus, and
+            the Meta Title / Meta Description / Keywords in the SEO section below — review
+            and edit before saving.
           </p>
         </div>
 
@@ -348,17 +358,20 @@ export default function AppForm({ action, initialData, errorMessage }) {
         <legend className="px-1 text-sm font-bold text-slate-900">SEO</legend>
         <div className="mt-2 flex flex-col gap-3">
           <Field
+            ref={metaTitleRef}
             label="Meta Title"
             name="metaTitle"
             defaultValue={initialData?.seo?.metaTitle}
           />
           <TextArea
+            ref={metaDescriptionRef}
             label="Meta Description"
             name="metaDescription"
             defaultValue={initialData?.seo?.metaDescription}
             rows={2}
           />
           <Field
+            ref={keywordsRef}
             label="Keywords (comma-separated)"
             name="keywords"
             defaultValue={initialData?.seo?.keywords?.join(", ")}

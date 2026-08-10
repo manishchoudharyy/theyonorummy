@@ -77,7 +77,12 @@ async function parseAppFormData(formData) {
 
   let logo = String(formData.get("logo") || "").trim();
   const logoFile = formData.get("logoFile");
-  if (logoFile instanceof File && logoFile.size > 0) {
+  const isUploadedFile =
+    logoFile &&
+    typeof logoFile === "object" &&
+    typeof logoFile.arrayBuffer === "function" &&
+    logoFile.size > 0;
+  if (isUploadedFile) {
     logo = await saveLogoFile(logoFile, slug);
   }
 

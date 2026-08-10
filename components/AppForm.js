@@ -73,9 +73,9 @@ export default function AppForm({ action, initialData, errorMessage }) {
   const slugRef = useRef(null);
   const slugTouchedRef = useRef(isEdit);
   const descriptionRef = useRef(null);
-  const whyChooseRef = useRef(null);
+  const keyHighlightsRef = useRef(null);
   const howToDownloadRef = useRef(null);
-  const additionalInfoRef = useRef(null);
+  const howToClaimBonusRef = useRef(null);
 
   const [aiLanguage, setAiLanguage] = useState("Hinglish");
   const [aiNotes, setAiNotes] = useState("");
@@ -131,9 +131,9 @@ export default function AppForm({ action, initialData, errorMessage }) {
     }
 
     descriptionRef.current?.setContent(result.data.description);
-    whyChooseRef.current?.setContent(result.data.whyChoose);
+    keyHighlightsRef.current?.setContent(result.data.keyHighlights);
     howToDownloadRef.current?.setContent(result.data.howToDownload);
-    additionalInfoRef.current?.setContent(result.data.additionalInfo);
+    howToClaimBonusRef.current?.setContent(result.data.howToClaimBonus);
   };
 
   return (
@@ -310,8 +310,8 @@ export default function AppForm({ action, initialData, errorMessage }) {
           </div>
           {aiError && <p className="text-xs font-medium text-red-600">{aiError}</p>}
           <p className="text-[11px] font-normal text-slate-500">
-            Fills in Description, Why Choose, How To Download, and Additional Info below —
-            review and edit before saving.
+            Fills in Description, Key Highlights, How To Download, and How To Claim Bonus
+            below — review and edit before saving.
           </p>
         </div>
 
@@ -323,10 +323,10 @@ export default function AppForm({ action, initialData, errorMessage }) {
             defaultValue={initialData?.content?.description}
           />
           <RichTextEditor
-            ref={whyChooseRef}
-            label="Why Choose"
-            name="whyChoose"
-            defaultValue={initialData?.content?.whyChoose}
+            ref={keyHighlightsRef}
+            label="Key Highlights"
+            name="keyHighlights"
+            defaultValue={initialData?.content?.keyHighlights}
           />
           <RichTextEditor
             ref={howToDownloadRef}
@@ -335,10 +335,10 @@ export default function AppForm({ action, initialData, errorMessage }) {
             defaultValue={initialData?.content?.howToDownload}
           />
           <RichTextEditor
-            ref={additionalInfoRef}
-            label="Additional Info"
-            name="additionalInfo"
-            defaultValue={initialData?.content?.additionalInfo}
+            ref={howToClaimBonusRef}
+            label="How To Claim Bonus"
+            name="howToClaimBonus"
+            defaultValue={initialData?.content?.howToClaimBonus}
           />
         </div>
       </fieldset>

@@ -317,9 +317,9 @@ export default async function AppPage({ params }) {
 
         {/* ══════════ SEO CONTENT ══════════ */}
         {(app.content?.description ||
-          app.content?.whyChoose ||
+          app.content?.keyHighlights ||
           app.content?.howToDownload ||
-          app.content?.additionalInfo) && (
+          app.content?.howToClaimBonus) && (
           <div className="mt-4 border border-slate-200 bg-white p-4">
             {app.content?.description && (
               <article>
@@ -333,14 +333,14 @@ export default async function AppPage({ params }) {
               </article>
             )}
 
-            {app.content?.whyChoose && (
+            {app.content?.keyHighlights && (
               <article className="mt-4">
                 <h2 className="mb-2 text-lg font-bold text-slate-900 inline-block border-b-4 border-slate-400 pb-0.5">
-                  Why Choose {app.name}?
+                  Key Highlights
                 </h2>
                 <div
                   className={proseClasses}
-                  dangerouslySetInnerHTML={{ __html: app.content.whyChoose }}
+                  dangerouslySetInnerHTML={{ __html: app.content.keyHighlights }}
                 />
               </article>
             )}
@@ -357,14 +357,14 @@ export default async function AppPage({ params }) {
               </article>
             )}
 
-            {app.content?.additionalInfo && (
+            {app.content?.howToClaimBonus && (
               <article className="mt-4">
                 <h2 className="mb-2 text-lg font-bold text-slate-900 inline-block border-b-4 border-slate-400 pb-0.5">
-                  Additional Info
+                  How To Claim Bonus
                 </h2>
                 <div
                   className={proseClasses}
-                  dangerouslySetInnerHTML={{ __html: app.content.additionalInfo }}
+                  dangerouslySetInnerHTML={{ __html: app.content.howToClaimBonus }}
                 />
               </article>
             )}

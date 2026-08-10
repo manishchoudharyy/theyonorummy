@@ -3,55 +3,56 @@
 import { GoogleGenAI } from "@google/genai";
 
 const SYSTEM_INSTRUCTION = `
-You write plain, natural text for a simple mobile app review directory. Write like an everyday human typing a casual review or guide online.
+You write plain, natural text for a simple mobile app directory. Write like a normal person explaining an app casually.
 
-CRITICAL WRITING STYLE & RHYTHM RULES:
-1. NATURAL HUMAN BURSTINESS: Avoid robotic uniform sentence lengths. Do NOT make every sentence 5-6 words long. Mix it up completely! 
-   - Some sentences should be very short (3-5 words).
-   - Some sentences should be long, informal, and flowing naturally across multiple ideas without breaking early. 
-   - Write organically. Humans don't follow rigid grammar patterns.
-2. SIMPLE WORDS ONLY: Use simple everyday words. 15-year-old readability. No fancy vocabulary.
-3. STRICT FORBIDDEN WORDS & PHRASES (NEVER USE):
-   - English AI words: enthusiasts, delve, moreover, furthermore, seamless, elevate, unlock, game-changer, revolutionize, cutting-edge, robust, look no further, in today's world, whether you are, testament, beacon, paramount, dive into, ultimate, realm.
-   - Punctuation: NEVER use em-dashes (—).
-4. FORBIDDEN HINGLISH SPELLINGS (STRICT MATCHING):
-   - NEVER use "karein" -> Always write "kare"
-   - NEVER use "jahan" -> Always write "jaha"
-   - NEVER use "hain" -> Always write "hai" (for both singular and plural)
-   - NEVER use textbook formal Hindi. Write casual daily spoken Hinglish.
+CRITICAL WRITING STYLE RULES:
+1. Write naturally. Mix short and long sentences. Some sentences can be 4-6 words. Some can be longer and flow naturally.
+2. Use simple everyday words only. Write like a 15-16 year old would speak.
+3. Write in casual Hinglish when language is Hinglish. Do not use formal or textbook Hindi.
+4. NEVER use these words/phrases: enthusiasts, delve, moreover, furthermore, seamless, elevate, unlock, game-changer, revolutionize, cutting-edge, robust, look no further, in today's world, whether you are, testament, beacon, paramount, dive into, ultimate, realm, exciting, amazing, incredible.
+5. NEVER use em-dashes (—).
+6. For Hinglish: Use "kare", "jaha", "hai" instead of formal versions like "karein", "jahan", "hain".
 
-KEYWORD INTEGRATION RULES (CRITICAL FOR SEO):
-Include these 3 keyword variations naturally without forcing them or making them sound awkward:
-1. "{appname}"
-2. "{appname} apk"
-3. "{appname} apk download"
+KEYWORD RULES (VERY IMPORTANT):
+Naturally include these 3 variations in the description:
+- "{appname}"
+- "{appname} apk"
+- "{appname} apk download"
 
-OUTPUT FORMAT RULES:
-Return ONLY a valid JSON object. Every key must be a STRING (never an Array).
-Use standard HTML tags (<p>, <ul>, <li>, <ol>) inside the JSON string values so it fits directly into a rich-text database.
+Do not force them. Make them fit naturally in the sentences.
+
+OUTPUT RULES:
+- Return ONLY a valid JSON object.
+- All values must be strings (not arrays).
+- Use simple HTML tags: <p>, <ul>, <li>, <ol>
 `;
 
 function buildPrompt({ name, bonus, appSize, minWithdraw, language, extraNotes }) {
   return `
 Write content for this app:
-- App Name: ${name}
-- Bonus: ₹${bonus}
-- App Size: ${appSize}
-- Minimum Withdraw: ₹${minWithdraw}
-- Output Language: ${language} (English or Hinglish)
-${extraNotes ? `- Extra Notes / Unique Features: ${extraNotes}` : ""}
 
-Required SEO Keywords to naturally weave in:
+App Name: ${name}
+Bonus: ₹${bonus}
+App Size: ${appSize}
+Minimum Withdrawal: ₹${minWithdraw}
+Language: ${language}
+${extraNotes ? `Extra Notes: ${extraNotes}` : ""}
+
+Required Keywords (use naturally in description):
 - "${name}"
 - "${name} apk"
 - "${name} apk download"
 
-Required JSON Structure (All values MUST be HTML formatted STRINGS, not Arrays):
+Return this exact JSON structure:
+
 {
-  "description": "<p>Human-style introduction to ${name} and the signup bonus. Mix sentence lengths naturally.</p><p>Paragraph about available games and ₹${minWithdraw} minimum withdrawal.</p>",
-  "whyChoose": "<ul><li>Feature 1 highlighting ${name} apk advantages</li><li>Feature 2 about low withdrawal</li><li>Feature 3 about app size (${appSize})</li><li>Feature 4 about safety and payouts</li></ul>",
-  "howToDownload": "<ol><li>Step 1 mentioning ${name} apk download</li><li>Step 2 to allow unknown sources</li><li>Step 3 to install file</li><li>Step 4 to register and claim ₹${bonus} bonus</li></ol>",
-  "additionalInfo": "<p>1-2 sentences about Refer & Earn commission and a game suggestions (according to the app name) to play and short risk warning.</p>"
+  "description": "<p>Write 2 short paragraphs about the app. First paragraph should introduce ${name} and mention the signup bonus. Second paragraph should talk about games available and ₹${minWithdraw} minimum withdrawal. Naturally include the keywords ${name}, ${name} apk and ${name} apk download. Keep total length between 140-200 words. Write casually.</p>",
+  
+  "keyHighlights": "<ul><li>Point about current bonus</li><li>Point about minimum withdrawal</li><li>Point about app size or performance</li><li>Point about games or referral</li><li>One more useful point</li></ul>",
+  
+  "howToDownload": "<ol><li>Click the Download button on this page to get ${name} apk</li><li>Go to Settings and allow Install from Unknown Sources</li><li>Open the downloaded APK file and tap Install</li><li>Open the app after installation</li><li>Register with your mobile number</li></ol>",
+  
+  "howToClaimBonus": "<ol><li>Open ${name} after installing</li><li>Tap on Sign Up</li><li>Enter your mobile number</li><li>Enter the OTP you receive</li><li>Your ₹${bonus} bonus will be added to wallet automatically</li></ol>"
 }
 `;
 }
@@ -65,44 +66,39 @@ export async function generateAppContent({
   extraNotes = "",
 }) {
   if (!name || !bonus || !appSize) {
-    return { success: false, error: "App Name, Bonus, and App Size are required to generate content." };
+    return { success: false, error: "App Name, Bonus, and App Size are required." };
   }
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return { success: false, error: "GEMINI_API_KEY is not configured on the server." };
+    return { success: false, error: "GEMINI_API_KEY is not configured." };
   }
 
   const ai = new GoogleGenAI({ apiKey });
   const prompt = buildPrompt({ name, bonus, appSize, minWithdraw, language, extraNotes });
 
-  let response;
   try {
-    response = await ai.models.generateContent({
+    const response = await ai.models.generateContent({
       model: "gemini-flash-latest",
       contents: prompt,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 0.7,
+        temperature: 0.75,
         responseMimeType: "application/json",
       },
     });
+
+    const data = JSON.parse(response.text);
+
+    const requiredKeys = ["description", "keyHighlights", "howToDownload", "howToClaimBonus"];
+    const missing = requiredKeys.filter((key) => typeof data[key] !== "string" || !data[key].trim());
+    
+    if (missing.length > 0) {
+      return { success: false, error: `Missing fields: ${missing.join(", ")}` };
+    }
+
+    return { success: true, data };
   } catch (error) {
-    return { success: false, error: error.message || "Gemini request failed." };
+    return { success: false, error: error.message || "Failed to generate content." };
   }
-
-  let data;
-  try {
-    data = JSON.parse(response.text);
-  } catch {
-    return { success: false, error: "AI response was not valid JSON." };
-  }
-
-  const requiredKeys = ["description", "whyChoose", "howToDownload", "additionalInfo"];
-  const missing = requiredKeys.filter((key) => typeof data[key] !== "string" || !data[key].trim());
-  if (missing.length > 0) {
-    return { success: false, error: `AI response was missing: ${missing.join(", ")}.` };
-  }
-
-  return { success: true, data };
 }

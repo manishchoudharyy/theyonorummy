@@ -8,7 +8,7 @@ const ContentSchema = new Schema(
       type: String,
       default: '',
     },
-    whyChoose: {
+    keyHighlights: {
       type: String,
       default: '',
     },
@@ -16,7 +16,7 @@ const ContentSchema = new Schema(
       type: String,
       default: '',
     },
-    additionalInfo: {
+    howToClaimBonus: {
       type: String,
       default: '',
     },

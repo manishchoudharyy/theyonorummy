@@ -100,9 +100,9 @@ async function parseAppFormData(formData) {
     referLink: String(formData.get("referLink") || "").trim(),
     content: {
       description: String(formData.get("description") || "").trim(),
-      whyChoose: String(formData.get("whyChoose") || "").trim(),
+      keyHighlights: String(formData.get("keyHighlights") || "").trim(),
       howToDownload: String(formData.get("howToDownload") || "").trim(),
-      additionalInfo: String(formData.get("additionalInfo") || "").trim(),
+      howToClaimBonus: String(formData.get("howToClaimBonus") || "").trim(),
     },
     seo: {
       metaTitle: String(formData.get("metaTitle") || "").trim(),

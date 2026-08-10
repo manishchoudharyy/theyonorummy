@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import { moveAppPosition } from "../app/admin/actions";
+import { moveAppPosition, deleteApp } from "../app/admin/actions";
 
 export default function AppsTable({ apps }) {
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState("");
+  const [deletingId, setDeletingId] = useState(null);
 
   const query = search.trim().toLowerCase();
   const filteredApps = query
@@ -21,6 +22,15 @@ export default function AppsTable({ apps }) {
   const handleMove = (id, direction) => {
     startTransition(() => {
       moveAppPosition(id, direction);
+    });
+  };
+
+  const handleDelete = (id, name) => {
+    if (!window.confirm(`Delete "${name}"? This cannot be undone.`)) return;
+    setDeletingId(id);
+    startTransition(async () => {
+      await deleteApp(id);
+      setDeletingId(null);
     });
   };
 
@@ -91,12 +101,22 @@ export default function AppsTable({ apps }) {
                   )}
                 </td>
                 <td className="px-4 py-3">
-                  <Link
-                    href={`/admin/apps/${app._id}`}
-                    className="text-xs font-semibold text-blue-600 hover:underline"
-                  >
-                    Edit
-                  </Link>
+                  <div className="flex items-center gap-3">
+                    <Link
+                      href={`/admin/apps/${app._id}`}
+                      className="text-xs font-semibold text-blue-600 hover:underline"
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      type="button"
+                      disabled={deletingId === app._id}
+                      onClick={() => handleDelete(app._id, app.name)}
+                      className="text-xs font-semibold text-red-600 hover:underline disabled:opacity-40"
+                    >
+                      {deletingId === app._id ? "Deleting…" : "Delete"}
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

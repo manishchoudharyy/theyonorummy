@@ -150,6 +150,22 @@ export default async function HomePage({ searchParams }) {
             Download all yono games in one place. As soon as a new yono games app is launched, we first download, use, and verify it ourselves before adding it here. Download any app from this yono games list and get a sign-up bonus from ₹51 up to ₹500.</p>
         </section>
 
+        {/* ================= Quick Summary ================= */}
+        {!q && !categoryFilter && (
+          <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 lg:p-6">
+            <h2 className="text-base font-bold text-slate-900 lg:text-lg">
+              Quick Summary
+            </h2>
+            <p className="mt-2 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
+              TheYonoRummy is a hand-reviewed directory of {apps.length}+ Yono Rummy and
+              other real-money card game apps for Android. Every app listed here offers a
+              signup bonus between ₹51 and ₹500, with a minimum withdrawal of just ₹100.
+              It&apos;s built for Indian users who want safe, verified referral links to
+              play rummy, slots, and card games and withdraw real winnings.
+            </p>
+          </section>
+        )}
+
         {/* ================= Category Pills ================= */}
         <div className="mt-4">
           <CategoryPills
@@ -206,20 +222,23 @@ export default async function HomePage({ searchParams }) {
             Yono Rummy aur Yono Slots Apps me kitna Bonus milta hai?
           </h3>
           <p className="mt-2 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
-            Jab aap is list se koi bhi yono rummy ya popular yono slots apps download karte hai toh aapko registration ke time ₹51 se lekar ₹500 tak ka instant sign-up bonus dekhne ko milta hai. In sabhi apps me minimum withdrawal limit standard ₹100 rakhi gayi hai jise aap direct apne bank account me securely transfer kar sakte hain. Halanki  sabhi game operators apne rules time-to-time change karte rehte hain isliye download karne ke baad official terms zaroor check kare.
+            Is list ke yono rummy aur yono slots apps me aapko ₹51 se ₹500 tak ka signup bonus milta hai. Minimum withdrawal limit standard ₹100 rakhi gayi hai jise aap direct apne bank account me securely transfer kar sakte hain. Halanki sabhi game operators apne rules time-to-time change karte rehte hain isliye download karne ke baad official terms zaroor check kare.
           </p>
 
           <h3 className="mt-5 text-base font-bold text-slate-900">
             Yono 777 aur New Yono Games kaise download kare?
           </h3>
           <p className="mt-2 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
-            Market me aane waale har ek premium arcade launch jaise yono 777 aur baaki sabhi new yono games ke safe download links yaha available hai. Hum direct official tracking nodes aur secure servers ka use karte hai taaki aapko koi corrupted ya unverified third-party APK file na mile. Humare system me direct updates integrated hain jisse jab bhi koi naya update jaise signup bonus change ya new app version ya new download link aayega to aapko humari is website par sabse pahle update dekhne ko milega.
+            Yono 777 aur baaki sabhi new yono games ko is website ke Download button se seedha aur safely download kar sakte hai. Hum direct official tracking nodes aur secure servers ka use karte hai taaki aapko koi corrupted ya unverified third-party APK file na mile. Humare system me direct updates integrated hain jisse jab bhi koi naya update jaise signup bonus change ya new app version ya new download link aayega to aapko humari is website par sabse pahle update dekhne ko milega.
           </p>
+        </section>
 
-          <h3 className="mt-5 text-base font-bold text-slate-900">
+        {/* ================= Gaming Rules ================= */}
+        <section className="mb-10 rounded-2xl border border-slate-200 bg-white p-5 lg:p-8">
+          <h2 className="text-xl font-extrabold tracking-tight text-slate-900 lg:text-2xl">
             Zaroori Soochna aur Gaming Rules
-          </h3>
-          <p className="mt-2 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
+          </h2>
+          <p className="mt-3 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
             Real money mobile gaming me financial risk hota hai aur iski aadat bhi lag sakti hai. Hamesha ek limited budget set karke hi khele aur kabhi bhi losses ko recover karne ke liye dimaag kharab na kare. Bharat ke kuch states me real money card games par legal restrictions hai isliye download karne se pehle apne local laws aur state guidelines ko zaroor check kar le.
           </p>
         </section>

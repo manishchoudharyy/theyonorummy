@@ -178,3 +178,13 @@ export async function moveAppPosition(id, direction) {
   revalidatePath("/");
   revalidatePath("/admin/apps");
 }
+
+export async function deleteApp(id) {
+  await dbConnect();
+
+  const app = await App.findByIdAndDelete(id).lean();
+
+  revalidatePath("/");
+  revalidatePath("/admin/apps");
+  if (app?.slug) revalidatePath(`/${app.slug}`);
+}

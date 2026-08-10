@@ -85,6 +85,9 @@ export default function AppForm({ action, initialData, errorMessage }) {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState("");
 
+  const [logoPreview, setLogoPreview] = useState(null);
+  const selectedLogoFileRef = useRef(null);
+
   const [defaultAppSize] = useState(() => initialData?.appSize || randomAppSize());
   const [defaultDownloads] = useState(() => initialData?.downloads || randomDownloads());
   const [defaultRating] = useState(() => initialData?.rating ?? randomRating());
@@ -99,9 +102,29 @@ export default function AppForm({ action, initialData, errorMessage }) {
     return "";
   });
 
+  const updateLogoPreview = () => {
+    const file = selectedLogoFileRef.current;
+    if (!file) {
+      setLogoPreview(null);
+      return;
+    }
+    const currentSlug = (slugRef.current?.value || "").trim().toLowerCase();
+    const safeSlug = currentSlug.replace(/[^a-z0-9-]/g, "") || "app";
+    const ext =
+      (file.name.split(".").pop() || "webp").toLowerCase().replace(/[^a-z0-9]/g, "") ||
+      "webp";
+    setLogoPreview(`/icons/${safeSlug}.${ext}`);
+  };
+
   const handleNameChange = (e) => {
     if (slugTouchedRef.current || !slugRef.current) return;
     slugRef.current.value = slugify(e.target.value);
+    updateLogoPreview();
+  };
+
+  const handleLogoFileChange = (e) => {
+    selectedLogoFileRef.current = e.target.files?.[0] || null;
+    updateLogoPreview();
   };
 
   const handleGenerate = async () => {
@@ -180,6 +203,7 @@ export default function AppForm({ action, initialData, errorMessage }) {
             defaultValue={initialData?.slug}
             onChange={() => {
               slugTouchedRef.current = true;
+              updateLogoPreview();
             }}
             required
           />
@@ -190,14 +214,22 @@ export default function AppForm({ action, initialData, errorMessage }) {
                 type="file"
                 name="logoFile"
                 accept="image/*"
+                onChange={handleLogoFileChange}
                 className="text-sm font-normal text-slate-900 file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-emerald-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-emerald-700 hover:file:bg-emerald-100"
               />
             </label>
-            <p className="text-[11px] font-normal text-slate-400">
-              Saved automatically as <code>/icons/&#123;slug&#125;.ext</code>, replacing any
-              existing logo for this app.
-              {initialData?.logo && <> Current: <code>{initialData.logo}</code></>}
-            </p>
+            {logoPreview ? (
+              <p className="text-[11px] font-semibold text-emerald-600">
+                ✓ Will be saved automatically as <code>{logoPreview}</code> — you don&apos;t
+                need to type anything below.
+              </p>
+            ) : (
+              <p className="text-[11px] font-normal text-slate-400">
+                Saved automatically as <code>/icons/&#123;slug&#125;.ext</code>, replacing
+                any existing logo for this app.
+                {initialData?.logo && <> Current: <code>{initialData.logo}</code></>}
+              </p>
+            )}
             <Field
               label="Or Logo Path / URL (used only if no file is uploaded above)"
               name="logo"

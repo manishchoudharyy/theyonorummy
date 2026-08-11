@@ -190,12 +190,15 @@ No markdown. No explanation outside JSON.
 All output fields must be strings.
 Use clean HTML inside content fields: <p> <ul> <li> <ol> <strong>
 
-16. DO NOT REPEAT APP SIZE / MINIMUM WITHDRAWAL
-The app size may be mentioned in AT MOST ONE of these three sections:
-description, keyHighlights, howToDownload. Never repeat it in more than one.
-Apply the exact same rule to the minimum withdrawal amount: mention it in at
-most one section total across the whole page. Repeating the same fact in
-every section is padding, not useful content, and must be avoided.
+16. APP SIZE / MINIMUM WITHDRAWAL
+Never mention the app size anywhere in the content (not in description,
+keyHighlights, or howToDownload). It is not useful information for readers
+and must be left out completely.
+
+The minimum withdrawal amount may be mentioned in AT MOST ONE of these three
+sections: description, keyHighlights, howToDownload. Never repeat it in more
+than one. Repeating the same fact in every section is padding, not useful
+content, and must be avoided.
 
 17. APP PAGE TITLE
 Also write an "appTitle" - this is the big H1 heading shown at the top of
@@ -421,14 +424,15 @@ Paragraph 3:
 Explain download, registration, withdrawal or other practical information where supported.
 Naturally include the download intent.
 
-Do NOT pad the paragraphs. Remember rule 16: app size and minimum withdrawal
-may each appear in at most one section across the whole page, not in every
-paragraph.
+Do NOT pad the paragraphs. Remember rule 16: never mention app size anywhere,
+and minimum withdrawal may appear in at most one section across the whole
+page, not in every paragraph.
 
 KEY HIGHLIGHTS:
 Create exactly 5 <li> items.
 Do not simply repeat the same fields from the database.
 Turn facts into useful user-facing points.
+Never mention app size here (see rule 16).
 
 At least 2 of these 5 points MUST feel specific to THIS app, not generic
 boilerplate that could describe any app in this directory. Tie them to the
@@ -437,10 +441,9 @@ filler like "Great gaming experience" or "Easy to use interface" unless it
 is anchored to something actually supplied about this app.
 
 Example:
-Bad: "App Size: ${appSize}"
-Better: "Lightweight ${appSize} APK for users who want a smaller installation"
-But only when that information is actually useful, and only in one section
-total (see rule 16).
+Bad: "${name} is a great app with many features."
+Better: "${name} gives a ₹${bonus} signup bonus that lands in your wallet
+right after registration, before you even play a game."
 
 HOW TO DOWNLOAD:
 Create 5-7 practical steps.
@@ -545,15 +548,15 @@ function validateContent(data, context = {}) {
   if (data.description) {
     const words = wordCount(data.description);
     if (words < 140 || words > 180) {
-      errors.push(`description should be 120-180 words (got ${words})`);
+      errors.push(`description should be 140-180 words (got ${words})`);
     }
   }
 
   if (appSize && data.description && data.keyHighlights && data.howToDownload) {
     const count = countSectionsContaining(data, appSize);
-    if (count > 1) {
+    if (count > 0) {
       errors.push(
-        `App size mentioned in ${count} sections; must appear in at most 1 of description/keyHighlights/howToDownload`
+        `App size mentioned in the content; it must never be mentioned anywhere (description/keyHighlights/howToDownload)`
       );
     }
   }

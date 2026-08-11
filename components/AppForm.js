@@ -77,17 +77,50 @@ function randomAppSize() {
   return `${size}MB`;
 }
 
-function randomDownloads() {
-  const count = 10 + Math.floor(Math.random() * 491); // 10-500
-  return `${count}K+`;
+// isNew apps look like they just launched (~10-20 days old, still on their
+// first version line, small download/rating counts). Non-new apps look
+// established (~3-4 months old, a few updates behind, bigger numbers).
+function randomVersion(isNew) {
+  if (isNew) {
+    const minor = Math.floor(Math.random() * 3); // 0-2
+    const patch = Math.floor(Math.random() * 5); // 0-4
+    return `1.${minor}.${patch}`;
+  }
+  const major = 2 + Math.floor(Math.random() * 3); // 2-4
+  const minor = Math.floor(Math.random() * 6); // 0-5
+  const patch = Math.floor(Math.random() * 10); // 0-9
+  return `${major}.${minor}.${patch}`;
+}
+
+// Downloads in thousands. New apps: under 300K. Established apps: 300K-2M,
+// since a real app that's been out 3-4 months realistically has at least
+// that many installs.
+function randomDownloadsThousands(isNew) {
+  if (isNew) {
+    return 1 + Math.floor(Math.random() * 9); // 1K-9K
+  }
+  return 300 + Math.floor(Math.random() * 1701); // 300K-2000K (2M)
+}
+
+function formatDownloads(thousands) {
+  if (thousands >= 1000) {
+    const millions = Math.round((thousands / 1000) * 10) / 10;
+    return `${millions}M+`;
+  }
+  return `${thousands}K+`;
 }
 
 function randomRating() {
   return (3.8 + Math.random() * 0.8).toFixed(1); // 3.8-4.6
 }
 
-function randomRatingCount() {
-  return 5000 + Math.floor(Math.random() * 45001); // 5000-50000
+// Real apps typically show ~3-4% of installs as ratings. Derive rating
+// count FROM the downloads number instead of picking it independently, so
+// the two numbers actually make sense together.
+function ratingCountFromDownloads(downloadsThousands) {
+  const actualDownloads = downloadsThousands * 1000;
+  const ratio = 0.03 + Math.random() * 0.01; // 3%-4%
+  return Math.max(1, Math.round(actualDownloads * ratio));
 }
 
 export default function AppForm({ action, initialData, errorMessage, justCreated }) {
@@ -129,12 +162,40 @@ export default function AppForm({ action, initialData, errorMessage, justCreated
   const [logoPreview, setLogoPreview] = useState(null);
   const selectedLogoFileRef = useRef(null);
 
+  const versionRef = useRef(null);
+  const downloadsRef = useRef(null);
+  const ratingRef = useRef(null);
+  const ratingCountRef = useRef(null);
+
   const [defaultAppSize] = useState(() => initialData?.appSize || randomAppSize());
-  const [defaultDownloads] = useState(() => initialData?.downloads || randomDownloads());
+  const [defaultVersion] = useState(
+    () => initialData?.version || randomVersion(initialData?.isNewApp)
+  );
+  const [defaultDownloadsThousands] = useState(() =>
+    randomDownloadsThousands(initialData?.isNewApp)
+  );
+  const [defaultDownloads] = useState(
+    () => initialData?.downloads || formatDownloads(defaultDownloadsThousands)
+  );
   const [defaultRating] = useState(() => initialData?.rating ?? randomRating());
   const [defaultRatingCount] = useState(
-    () => initialData?.ratingCount ?? randomRatingCount()
+    () => initialData?.ratingCount ?? ratingCountFromDownloads(defaultDownloadsThousands)
   );
+
+  // "New" checkbox toggled -> regenerate version/downloads/rating so they
+  // actually look like a freshly launched app vs an established one.
+  // Rating count is derived from the same downloads number (~3-4% ratio),
+  // not picked independently, so the two numbers stay realistic together.
+  const handleIsNewAppChange = (e) => {
+    const isNew = e.target.checked;
+    const thousands = randomDownloadsThousands(isNew);
+    if (versionRef.current) versionRef.current.value = randomVersion(isNew);
+    if (downloadsRef.current) downloadsRef.current.value = formatDownloads(thousands);
+    if (ratingCountRef.current) {
+      ratingCountRef.current.value = ratingCountFromDownloads(thousands);
+    }
+    if (ratingRef.current) ratingRef.current.value = randomRating();
+  };
   const [defaultAppTitle] = useState(() => {
     if (initialData?.appTitle) return initialData.appTitle;
     if (initialData?.name) {
@@ -194,6 +255,7 @@ export default function AppForm({ action, initialData, errorMessage, justCreated
 
     if (!result.success) {
       setAiError(result.error);
+      setToast({ type: "error", message: result.error });
       return;
     }
 
@@ -301,12 +363,14 @@ export default function AppForm({ action, initialData, errorMessage, justCreated
             required
           />
           <Field
+            ref={versionRef}
             label="Version"
             name="version"
-            defaultValue={initialData?.version || "1.0.0"}
+            defaultValue={defaultVersion}
             placeholder="1.0.0"
           />
           <Field
+            ref={ratingRef}
             label="Rating (0-5)"
             name="rating"
             type="number"
@@ -317,6 +381,7 @@ export default function AppForm({ action, initialData, errorMessage, justCreated
             required
           />
           <Field
+            ref={ratingCountRef}
             label="Rating Count"
             name="ratingCount"
             type="number"
@@ -324,6 +389,7 @@ export default function AppForm({ action, initialData, errorMessage, justCreated
             defaultValue={defaultRatingCount}
           />
           <Field
+            ref={downloadsRef}
             label="Downloads"
             name="downloads"
             defaultValue={defaultDownloads}
@@ -340,7 +406,12 @@ export default function AppForm({ action, initialData, errorMessage, justCreated
           </div>
         </div>
         <div className="mt-3 flex flex-wrap gap-4">
-          <Checkbox label="New" name="isNewApp" defaultChecked={initialData?.isNewApp} />
+          <Checkbox
+            label="New"
+            name="isNewApp"
+            defaultChecked={initialData?.isNewApp}
+            onChange={handleIsNewAppChange}
+          />
           <Checkbox
             label="Trending"
             name="isTrending"

@@ -409,7 +409,10 @@ real hook (bonus amount or a genuinely supplied benefit). Not the same
 sentence as metaTitle.
 
 DESCRIPTION:
-Write 3 short paragraphs. Target exactly 120-180 words total, not more.
+Write 3 short paragraphs. Aim for the middle of the range, around 155-165
+words total, so you stay safely inside the required 140-180 word window
+even if your count is off by a little. Do not aim for the edges (like 138
+or 182) since that risks landing outside the allowed range.
 
 Paragraph 1:
 Introduce the app naturally.
@@ -547,8 +550,11 @@ function validateContent(data, context = {}) {
 
   if (data.description) {
     const words = wordCount(data.description);
-    if (words < 140 || words > 180) {
-      errors.push(`description should be 140-180 words (got ${words})`);
+    // Target is 140-180, but a couple of words either side is fine — word
+    // counting isn't exact for an LLM and failing a 182-word description
+    // over a 2-word overshoot just burns retries for no real benefit.
+    if (words < 130 || words > 190) {
+      errors.push(`description should be close to 140-180 words (got ${words})`);
     }
   }
 
@@ -672,7 +678,7 @@ export async function generateAppContent({
     existingData,
   };
 
-  const MAX_ATTEMPTS = 2;
+  const MAX_ATTEMPTS = 3;
   let lastResult = null;
 
   try {

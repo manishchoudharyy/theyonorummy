@@ -3,12 +3,28 @@
 import crypto from "crypto";
 import fs from "fs/promises";
 import path from "path";
+import { exec } from "child_process";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createSessionToken } from "../../lib/adminAuth";
 import dbConnect from "../../lib/db";
 import App from "../../models/App";
+
+// On this VPS, the running Next.js/PM2 process doesn't pick up files newly
+// written to public/ until the process restarts (confirmed: new icon
+// uploads 404 until `pm2 restart`). Fire a non-blocking restart right after
+// a new logo file lands on disk so it shows up without any manual step.
+// Never throws — if pm2 isn't available (e.g. local dev), this is a no-op.
+function scheduleServerRestartForNewAsset() {
+  if (process.env.NODE_ENV !== "production") return;
+  const pm2Name = process.env.PM2_APP_NAME || "theyonorummy";
+  exec(`pm2 restart ${pm2Name}`, (error) => {
+    if (error) {
+      console.error("Auto pm2 restart after logo upload failed:", error.message);
+    }
+  });
+}
 
 function safeCompare(a, b) {
   const bufA = Buffer.from(a);
@@ -58,6 +74,8 @@ async function saveLogoFile(file, slug) {
   const dir = path.join(process.cwd(), "public", "icons");
   await fs.mkdir(dir, { recursive: true });
   await fs.writeFile(path.join(dir, filename), buffer);
+
+  scheduleServerRestartForNewAsset();
 
   return `/icons/${filename}`;
 }

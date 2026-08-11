@@ -35,6 +35,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# app logos uploaded via admin panel at runtime — must never be
+# committed/reset/cleaned by git so VPS deploys can't wipe or revert them
+/public/icons/*
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

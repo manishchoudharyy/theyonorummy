@@ -1,8 +1,32 @@
 "use client";
 
-import { forwardRef, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
+import { useFormStatus } from "react-dom";
+import { useRouter } from "next/navigation";
 import RichTextEditor from "./RichTextEditor";
 import { generateAppContent } from "../app/admin/aiActions";
+import Toast from "./Toast";
+
+// Must be a child of the <form>, not the component that renders the form
+// itself — that's how useFormStatus knows which form's pending state to read.
+function SubmitButton({ label }) {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="flex h-12 items-center justify-center gap-2 rounded-xl bg-emerald-500 text-sm font-bold text-white transition hover:bg-emerald-600 disabled:cursor-not-allowed disabled:bg-emerald-300"
+    >
+      {pending && (
+        <span
+          aria-hidden="true"
+          className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
+        />
+      )}
+      {pending ? "Saving…" : label}
+    </button>
+  );
+}
 
 const Field = forwardRef(function Field({ label, ...props }, ref) {
   return (
@@ -66,8 +90,24 @@ function randomRatingCount() {
   return 5000 + Math.floor(Math.random() * 45001); // 5000-50000
 }
 
-export default function AppForm({ action, initialData, errorMessage }) {
+export default function AppForm({ action, initialData, errorMessage, justCreated }) {
   const isEdit = Boolean(initialData);
+  const router = useRouter();
+
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    if (!justCreated) return;
+    setToast({ type: "success", message: "App created successfully." });
+    router.replace(`/admin/apps/${initialData?._id}`, { scroll: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [justCreated]);
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 3000);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   const formRef = useRef(null);
   const slugRef = useRef(null);
@@ -411,12 +451,8 @@ export default function AppForm({ action, initialData, errorMessage }) {
         </div>
       </fieldset>
 
-      <button
-        type="submit"
-        className="h-12 rounded-xl bg-emerald-500 text-sm font-bold text-white hover:bg-emerald-600"
-      >
-        {initialData ? "Update App" : "Create App"}
-      </button>
+      <SubmitButton label={initialData ? "Update App" : "Create App"} />
+      <Toast toast={toast} />
     </form>
   );
 }

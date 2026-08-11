@@ -9,6 +9,7 @@ export default async function EditAppPage({ params, searchParams }) {
   const { id } = await params;
   const resolvedSearchParams = await searchParams;
   const errorMessage = resolvedSearchParams?.error;
+  const justCreated = resolvedSearchParams?.created === "1";
 
   await dbConnect();
   const app = await App.findById(id).lean();
@@ -24,6 +25,7 @@ export default async function EditAppPage({ params, searchParams }) {
           action={updateAppWithId}
           initialData={JSON.parse(JSON.stringify(app))}
           errorMessage={errorMessage}
+          justCreated={justCreated}
         />
       </div>
     </AdminShell>

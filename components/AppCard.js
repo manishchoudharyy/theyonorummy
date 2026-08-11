@@ -24,6 +24,7 @@ export default function AppCard({ app }) {
             alt={app.name}
             fill
             sizes="80px"
+            unoptimized
             className="object-contain p-0 transition duration-300 group-hover:scale-105"
           />
         </div>

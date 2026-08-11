@@ -1,13 +1,30 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
 import { moveAppPosition, deleteApp } from "../app/admin/actions";
+import Toast from "./Toast";
 
-export default function AppsTable({ apps }) {
+export default function AppsTable({ apps, justUpdated }) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    if (!justUpdated) return;
+    setToast({ type: "success", message: "App updated successfully." });
+    router.replace("/admin/apps", { scroll: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [justUpdated]);
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 3000);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   const query = search.trim().toLowerCase();
   const filteredApps = query
@@ -20,8 +37,12 @@ export default function AppsTable({ apps }) {
   const isFiltered = Boolean(query);
 
   const handleMove = (id, direction) => {
-    startTransition(() => {
-      moveAppPosition(id, direction);
+    startTransition(async () => {
+      try {
+        await moveAppPosition(id, direction);
+      } catch (error) {
+        setToast({ type: "error", message: "Couldn't reorder that app. Try again." });
+      }
     });
   };
 
@@ -29,7 +50,12 @@ export default function AppsTable({ apps }) {
     if (!window.confirm(`Delete "${name}"? This cannot be undone.`)) return;
     setDeletingId(id);
     startTransition(async () => {
-      await deleteApp(id);
+      try {
+        await deleteApp(id);
+        setToast({ type: "success", message: `"${name}" deleted.` });
+      } catch (error) {
+        setToast({ type: "error", message: `Couldn't delete "${name}". Try again.` });
+      }
       setDeletingId(null);
     });
   };
@@ -130,6 +156,8 @@ export default function AppsTable({ apps }) {
           </tbody>
         </table>
       </div>
+
+      <Toast toast={toast} />
     </div>
   );
 }

@@ -4,9 +4,11 @@ import App from "../../../models/App";
 import AdminShell from "../../../components/AdminShell";
 import AppsTable from "../../../components/AppsTable";
 
-export default async function ManageAppsPage() {
+export default async function ManageAppsPage({ searchParams }) {
   await dbConnect();
   const apps = await App.find({}).sort({ position: 1 }).lean();
+  const resolvedSearchParams = await searchParams;
+  const justUpdated = resolvedSearchParams?.updated === "1";
 
   return (
     <AdminShell>
@@ -20,7 +22,7 @@ export default async function ManageAppsPage() {
         </Link>
       </div>
       <div className="mt-4">
-        <AppsTable apps={JSON.parse(JSON.stringify(apps))} />
+        <AppsTable apps={JSON.parse(JSON.stringify(apps))} justUpdated={justUpdated} />
       </div>
     </AdminShell>
   );

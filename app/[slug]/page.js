@@ -246,6 +246,7 @@ export default async function AppPage({ params }) {
                 width={160}
                 height={160}
                 priority
+                unoptimized
                 className="h-full w-full object-contain p-2"
               />
             </div>

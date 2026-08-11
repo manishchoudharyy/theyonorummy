@@ -110,6 +110,7 @@ export default function AppForm({ action, initialData, errorMessage, justCreated
   }, [toast]);
 
   const formRef = useRef(null);
+  const appTitleRef = useRef(null);
   const slugRef = useRef(null);
   const slugTouchedRef = useRef(isEdit);
   const descriptionRef = useRef(null);
@@ -175,8 +176,8 @@ export default function AppForm({ action, initialData, errorMessage, justCreated
     const appSize = String(fd.get("appSize") || "").trim();
     const minWithdraw = String(fd.get("minWithdraw") || "").trim();
 
-    if (!name || !bonus || !appSize) {
-      setAiError("Fill in App Name, Bonus, and App Size first.");
+    if (!name || !bonus || !minWithdraw) {
+      setAiError("Fill in App Name, Bonus, and Minimum Withdrawal first.");
       return;
     }
 
@@ -201,6 +202,7 @@ export default function AppForm({ action, initialData, errorMessage, justCreated
     howToDownloadRef.current?.setContent(result.data.howToDownload);
     howToClaimBonusRef.current?.setContent(result.data.howToClaimBonus);
 
+    if (appTitleRef.current) appTitleRef.current.value = result.data.appTitle;
     if (metaTitleRef.current) metaTitleRef.current.value = result.data.metaTitle;
     if (metaDescriptionRef.current) {
       metaDescriptionRef.current.value = result.data.metaDescription;
@@ -229,6 +231,7 @@ export default function AppForm({ action, initialData, errorMessage, justCreated
           />
           <div className="sm:col-span-2">
             <Field
+              ref={appTitleRef}
               label="App Page Title (shown as the H1 on the app page)"
               name="appTitle"
               defaultValue={defaultAppTitle}

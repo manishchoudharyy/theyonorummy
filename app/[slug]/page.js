@@ -67,7 +67,7 @@ function formatDate(date) {
 }
 
 const proseClasses =
-  "flex flex-col gap-3 text-[15px] leading-[1.7] text-slate-600 [&_h3]:mt-3 [&_h3]:text-base [&_h3]:font-bold [&_h3]:text-slate-900 [&_strong]:font-semibold [&_strong]:text-slate-900";
+  "flex flex-col gap-3 text-[15px] leading-[1.7] text-slate-600 [&_h3]:mt-3 [&_h3]:text-base [&_h3]:font-bold [&_h3]:text-slate-900 [&_strong]:font-semibold [&_strong]:text-slate-900 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-1 [&_li]:leading-[1.6]";
 
 export default async function AppPage({ params }) {
   const { slug } = await params;

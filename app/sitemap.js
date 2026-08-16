@@ -1,5 +1,6 @@
 import dbConnect from '../lib/db';
 import App from '../models/App';
+import { FEATURED_CATEGORIES } from '../lib/categoryContent';
 
 const SITE_URL = 'https://theyonorummy.com';
 
@@ -15,7 +16,12 @@ export default async function sitemap() {
     priority: 0.8,
   }));
 
-  const categories = Array.from(new Set(apps.flatMap((app) => app.categories || [])));
+  // Union with FEATURED_CATEGORIES so nav-linked category pages (slots,
+  // 777, spin, vip, diwa) are always in the sitemap, even before any app
+  // has actually been tagged with that category yet.
+  const categories = Array.from(
+    new Set([...apps.flatMap((app) => app.categories || []), ...FEATURED_CATEGORIES])
+  );
   const categoryEntries = categories.map((category) => ({
     url: `${SITE_URL}/category/${category}`,
     lastModified: new Date(),

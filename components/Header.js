@@ -4,10 +4,12 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const navLinks = [
-  { label: "All Yono Games", href: "/" },
-  { label: "Yono Rummy", href: "/" },
-  { label: "Yono Slots", href: "/" },
-  { label: "Yono 777", href: "/" },
+  { label: "Yono Rummy", href: "/category/rummy" },
+  { label: "Yono Slots", href: "/category/slots" },
+  { label: "Yono 777", href: "/category/777" },
+  { label: "Yono Spin", href: "/category/spin" },
+  { label: "Yono VIP", href: "/category/vip" },
+  { label: "Diwa Games", href: "/category/diwa" },
 ];
 
 export default function Header() {
@@ -85,9 +87,13 @@ export default function Header() {
           </form>
 
           {/* Desktop nav */}
-          <nav className="hidden items-center gap-6 text-sm font-medium text-slate-600 lg:flex">
+          <nav className="hidden shrink-0 items-center gap-5 text-sm font-medium text-slate-600 lg:flex">
             {navLinks.map(({ label, href }) => (
-              <Link key={label} href={href} className="hover:text-slate-900">
+              <Link
+                key={label}
+                href={href}
+                className="whitespace-nowrap hover:text-slate-900"
+              >
                 {label}
               </Link>
             ))}

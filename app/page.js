@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import dbConnect from "../lib/db";
 import App from "../models/App";
 import AppCard from "../components/AppCard";
@@ -7,6 +8,22 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 
 const SITE_URL = "https://theyonorummy.com";
+
+// A curated set, not every game every app has (100-200 is normal per app).
+// Real official sites we checked do the same thing: showcase the popular
+// ones, not an exhaustive list nobody would scroll through.
+const POPULAR_GAMES = [
+  { file: "icon_Rummy.png", name: "Rummy" },
+  { file: "icon_7-Up-down.png", name: "7 Up Down" },
+  { file: "icon_ander-banar.png", name: "Andar Bahar" },
+  { file: "icon_Dragon-Tiger.png", name: "Dragon Tiger" },
+  { file: "icon_Crash.png", name: "Crash" },
+  { file: "icon_wingo-lottery.png", name: "Wingo Lottery" },
+  { file: "icon_Poker.png", name: "Poker" },
+  { file: "icon_Roulette.png", name: "Roulette" },
+  { file: "icon_Jhandi-Munda.png", name: "Jhandi Munda" },
+  { file: "icon_Ludo.png", name: "Ludo" },
+];
 
 function escapeRegex(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -37,8 +54,8 @@ export async function generateMetadata({ searchParams }) {
     };
   }
 
-  const title = `Yono Rummy Apps ${currentYear} — Download All Yono Games`;
-  const description = `Download verified Yono Rummy apps in ${currentYear}. Get signup bonus from ₹51 to ₹500, compare ratings, and find safe referral links for all Yono games.`;
+  const title = `Yono Rummy Games ${currentYear} | All Yono Games List`;
+  const description = `Download Yono Rummy games and all Yono Games in ${currentYear}. Play rummy, slots, and card games with signup bonus from ₹51 to ₹500 and instant payment with ₹100 minimum withdrawal.`;
 
   return {
     title,
@@ -48,8 +65,8 @@ export async function generateMetadata({ searchParams }) {
       title,
       description,
       url: SITE_URL,
-      siteName: "TheYonoRummy",
-      images: [{ url: "/logo.webp", width: 512, height: 512, alt: "TheYonoRummy" }],
+      siteName: "The Yono Rummy",
+      images: [{ url: "/logo.webp", width: 512, height: 512, alt: "The Yono Rummy" }],
       locale: "en_IN",
       type: "website",
     },
@@ -96,13 +113,14 @@ export default async function HomePage({ searchParams }) {
     "@graph": [
       {
         "@type": "Organization",
-        name: "TheYonoRummy",
+        name: "The Yono Rummy",
         url: SITE_URL,
         logo: `${SITE_URL}/logo.webp`,
       },
       {
         "@type": "WebSite",
-        name: "TheYonoRummy",
+        "@id": `${SITE_URL}/#website`,
+        name: "The Yono Rummy",
         url: SITE_URL,
         potentialAction: {
           "@type": "SearchAction",
@@ -112,9 +130,8 @@ export default async function HomePage({ searchParams }) {
       },
       {
         "@type": "CollectionPage",
-        name: "Yono Rummy Apps - Yono Games",
-        description:
-          "Directory of verified Yono Rummy and earning apps with signup bonuses and safe referral links.",
+        name: "Yono Rummy Games - All Yono Games",
+        "description": "Directory of Yono Rummy games and all Yono Games with signup bonus from ₹51 to ₹500 and ₹100 minimum withdrawal.",
         url: SITE_URL,
         mainEntity: {
           "@type": "ItemList",
@@ -144,27 +161,11 @@ export default async function HomePage({ searchParams }) {
         {/* ================= Trust Hero ================= */}
         <section className="mt-4 rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-teal-50 to-blue-50 p-2 lg:p-6">
           <h1 className="text-xl font-bold leading-tight lg:text-3xl">
-            Yono Rummy Apps - Yono Games
+            Yono Rummy Games - All Yono Games 2026
           </h1>
           <p className="mt-1 max-w-xl text-justify text-[13px] leading-tight text-slate-600 lg:text-sm">
-            Download all yono games in one place. As soon as a new yono games app is launched, we first download, use, and verify it ourselves before adding it here. Download any app from this yono games list and get a sign-up bonus from ₹51 up to ₹500.</p>
+            Find the complete list of Yono Rummy games along with all Yono Games in one place. We personally download and check every new app before listing it here. You can play rummy, slots, and other real money games, get a signup bonus from ₹51 to ₹500, and withdraw with a minimum of just ₹100.</p>
         </section>
-
-        {/* ================= Quick Summary ================= */}
-        {!q && !categoryFilter && (
-          <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 lg:p-6">
-            <h2 className="text-base font-bold text-slate-900 lg:text-lg">
-              Quick Summary
-            </h2>
-            <p className="mt-2 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
-              TheYonoRummy is a hand-reviewed directory of {apps.length}+ Yono Rummy and
-              other real-money card game apps for Android. Every app listed here offers a
-              signup bonus between ₹51 and ₹500, with a minimum withdrawal of just ₹100.
-              It&apos;s built for Indian users who want safe, verified referral links to
-              play rummy, slots, and card games and withdraw real winnings.
-            </p>
-          </section>
-        )}
 
         {/* ================= Category Pills ================= */}
         <div className="mt-4">
@@ -209,37 +210,105 @@ export default async function HomePage({ searchParams }) {
           )}
         </section>
 
-        {/* ================= SEO Info Block ================= */}
-        <section className="mb-10 rounded-2xl border border-slate-200 bg-white p-5 lg:p-8">
-          <h2 className="text-xl font-extrabold tracking-tight text-slate-900 lg:text-2xl">
-            All Yono Games List - Download All Yono Games Apps with Bonus
-          </h2>
-          <p className="mt-3 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
-            Agar aap internet par latest yono games ya unke verified links dhundh rahe hain to aap bilkul sahi jagah aaye hai. The yono rummy par humne all yono games ko ek hi jagah list kiya hai taaki aapko alag-alag websites par bhatakna na pade. Har ek app ko personally use karne ke baad hi yaha list kiya jata hai.
-          </p>
+       <section className="mb-10 rounded-2xl border border-slate-200 bg-white p-5 lg:p-8">
+  <h2 className="text-xl font-extrabold tracking-tight text-slate-900 lg:text-2xl">
+    Yono Rummy Games & All Yono Games List 2026
+  </h2>
 
-          <h3 className="mt-6 text-base font-bold text-slate-900">
-            Yono Rummy aur Yono Slots Apps me kitna Bonus milta hai?
-          </h3>
-          <p className="mt-2 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
-            Is list ke yono rummy aur yono slots apps me aapko ₹51 se ₹500 tak ka signup bonus milta hai. Minimum withdrawal limit standard ₹100 rakhi gayi hai jise aap direct apne bank account me securely transfer kar sakte hain. Halanki sabhi game operators apne rules time-to-time change karte rehte hain isliye download karne ke baad official terms zaroor check kare.
-          </p>
+  <p className="mt-3 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
+    If you are searching for Yono Rummy games or the complete list of all Yono
+    Games, you are on the right website. We have listed all Yono Rummy apps and
+    other Yono Games in one place so you do not have to visit multiple
+    websites. Every app added here is personally checked before it is
+    published.
+  </p>
 
-          <h3 className="mt-5 text-base font-bold text-slate-900">
-            Yono 777 aur New Yono Games kaise download kare?
-          </h3>
-          <p className="mt-2 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
-            Yono 777 aur baaki sabhi new yono games ko is website ke Download button se seedha aur safely download kar sakte hai. Hum direct official tracking nodes aur secure servers ka use karte hai taaki aapko koi corrupted ya unverified third-party APK file na mile. Humare system me direct updates integrated hain jisse jab bhi koi naya update jaise signup bonus change ya new app version ya new download link aayega to aapko humari is website par sabse pahle update dekhne ko milega.
-          </p>
-        </section>
+  <p className="mt-3 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
+    With this Yono Rummy games list you can find the latest apps, check the
+    current signup bonus of each one, and download whichever you like. Along
+    with Yono Rummy games, you will also find other popular Yono Games
+    available on the same network, all sorted in one directory.
+  </p>
+
+  <h3 className="mt-6 text-base font-bold text-slate-900">
+    How much bonus do Yono Rummy games offer?
+  </h3>
+  <p className="mt-2 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
+    Most Yono Rummy games and other Yono Games currently offer a signup bonus
+    between ₹51 and ₹500. The amount is different for each app. It can also
+    change from time to time depending on ongoing offers. After you register,
+    the bonus is usually credited to your wallet so you can start playing
+    without making any deposit.
+  </p>
+  <p className="mt-2 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
+    The minimum withdrawal on most of these apps is ₹100. You can withdraw
+    through UPI or bank transfer once you reach the limit. One tip: after
+    installing, check the latest bonus offer and withdrawal rules inside the
+    app once, because these change more often than the apps themselves.
+  </p>
+
+  <h3 className="mt-6 text-base font-bold text-slate-900">
+    How to download Yono Rummy games and all Yono Games?
+  </h3>
+  <p className="mt-2 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
+    You can download any Yono Rummy game or other Yono Games directly from
+    this website. Just click the download button on the app you want, allow
+    installation from unknown sources in your phone settings, and install the
+    APK file. After opening the app, register with your mobile number and
+    verify the OTP. Your signup bonus gets credited right after that.
+  </p>
+  <p className="mt-2 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
+    This website is updated regularly. Whenever a new Yono Rummy game or any
+    other Yono Game is launched, or when an existing app changes its bonus or
+    download link, we update the details here the same day. No need to hunt
+    through old pages on other sites for working links.
+  </p>
+
+  <h3 className="mt-6 text-base font-bold text-slate-900">
+    What type of games are available in Yono Games?
+  </h3>
+  <p className="mt-2 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
+    Yono Rummy games mainly focus on rummy and card games. But many apps from
+    the same network also include slots, 777 games, spin games, and other real
+    money options. That is why this website covers both Yono Rummy games and
+    the wider list of all Yono Games, whether you play only rummy or like
+    trying different game styles.
+  </p>
+  <p className="mt-2 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
+    Every app usually has 100-200 games inside it, so here are some of the
+    most popular ones you will commonly find. The exact games available can
+    differ from app to app, so always check the in-app game list after
+    installing.
+  </p>
+  <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-5">
+    {POPULAR_GAMES.map((game) => (
+      <div
+        key={game.file}
+        className="flex flex-col items-center gap-1.5 rounded-xl border border-slate-100 bg-slate-50 p-3 text-center"
+      >
+        <div className="relative h-12 w-12 overflow-hidden rounded-lg">
+          <Image
+            src={`/games/${game.file}`}
+            alt={`${game.name} game`}
+            fill
+            sizes="48px"
+            unoptimized
+            className="object-contain"
+          />
+        </div>
+        <span className="text-[11px] font-semibold text-slate-700">{game.name}</span>
+      </div>
+    ))}
+  </div>
+</section>
 
         {/* ================= Gaming Rules ================= */}
         <section className="mb-10 rounded-2xl border border-slate-200 bg-white p-5 lg:p-8">
           <h2 className="text-xl font-extrabold tracking-tight text-slate-900 lg:text-2xl">
-            Zaroori Soochna aur Gaming Rules
+            Important Notice and Gaming Rules
           </h2>
           <p className="mt-3 text-[13px] leading-relaxed text-slate-600 lg:text-sm">
-            Real money mobile gaming me financial risk hota hai aur iski aadat bhi lag sakti hai. Hamesha ek limited budget set karke hi khele aur kabhi bhi losses ko recover karne ke liye dimaag kharab na kare. Bharat ke kuch states me real money card games par legal restrictions hai isliye download karne se pehle apne local laws aur state guidelines ko zaroor check kar le.
+            Real money mobile gaming carries financial risk and can become habit-forming. Always set a limited budget before you play, and never chase losses to try and recover them. Real money card games are legally restricted in some Indian states, so check your local laws and state guidelines before downloading.
           </p>
         </section>
       </main>

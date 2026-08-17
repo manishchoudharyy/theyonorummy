@@ -5,7 +5,7 @@ import App from "../../../models/App";
 import AppCard from "../../../components/AppCard";
 import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
-import { getCategoryContent, FEATURED_CATEGORIES } from "../../../lib/categoryContent";
+import { getCategoryContent, FEATURED_CATEGORIES, NAV_CATEGORIES } from "../../../lib/categoryContent";
 
 const SITE_URL = "https://theyonorummy.com";
 
@@ -16,7 +16,8 @@ function toLabel(category) {
 export async function generateStaticParams() {
   await dbConnect();
   const dbCategories = await App.distinct("categories", { isActive: true });
-  const allSlugs = new Set([...dbCategories, ...FEATURED_CATEGORIES]);
+  const navSlugs = NAV_CATEGORIES.map((c) => c.slug);
+  const allSlugs = new Set([...dbCategories, ...FEATURED_CATEGORIES, ...navSlugs]);
   return Array.from(allSlugs).map((category) => ({ category }));
 }
 
@@ -59,12 +60,12 @@ export default async function CategoryPage({ params }) {
   await dbConnect();
 
   const content = getCategoryContent(category);
-  const isFeatured = FEATURED_CATEGORIES.includes(category.toLowerCase());
+  const isNavCategory = NAV_CATEGORIES.some((c) => c.slug === category.toLowerCase());
+  const isFeatured = FEATURED_CATEGORIES.includes(category.toLowerCase()) || isNavCategory;
 
-  const [apps, distinctCategories] = await Promise.all([
-    App.find({ isActive: true, categories: category }).sort({ position: 1 }).lean(),
-    App.distinct("categories", { isActive: true }),
-  ]);
+  const apps = await App.find({ isActive: true, categories: category })
+    .sort({ position: 1 })
+    .lean();
 
   // Featured categories (linked from the navbar) stay live with their
   // content even before any app is tagged for them — a 404 here would mean
@@ -79,12 +80,18 @@ export default async function CategoryPage({ params }) {
     `Verified Yono ${label} apps with signup bonuses from ₹51 to ₹500 and safe, tracked referral links.`;
   const categoryUrl = `${SITE_URL}/category/${category}`;
 
-  const otherCategories = Array.from(new Set([...FEATURED_CATEGORIES, ...distinctCategories]))
-    .filter((c) => c.toLowerCase() !== category.toLowerCase())
-    .map((c) => ({
-      slug: c,
-      label: getCategoryContent(c)?.label || toLabel(c),
-    }));
+  // Same set as the navbar, minus whichever category we're already on —
+  // "Other Categories" should always mirror what's actually in the nav.
+  const otherCategories = NAV_CATEGORIES.filter(
+    (c) => c.slug !== category.toLowerCase()
+  );
+
+  // Breadcrumb trail wants the short nav-style name ("Yono Slots"), not the
+  // fuller page heading ("Yono Slots Apps") — different node, different
+  // convention.
+  const breadcrumbLabel =
+    NAV_CATEGORIES.find((c) => c.slug === category.toLowerCase())?.label ||
+    `Yono ${label}`;
 
   // BreadcrumbList: only nodes with a real, navigable URL. "Categories" is
   // shown in the visible breadcrumb below but is NOT a real page, so it's
@@ -98,7 +105,7 @@ export default async function CategoryPage({ params }) {
         "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-          { "@type": "ListItem", position: 2, name: heroTitle, item: categoryUrl },
+          { "@type": "ListItem", position: 2, name: breadcrumbLabel, item: categoryUrl },
         ],
       },
       {
@@ -141,7 +148,7 @@ export default async function CategoryPage({ params }) {
           <span className="mx-1.5">/</span>
           <span>Categories</span>
           <span className="mx-1.5">/</span>
-          <span className="font-medium text-slate-700">{heroTitle}</span>
+          <span className="font-medium text-slate-700">{breadcrumbLabel}</span>
         </nav>
 
         {/* ================= Category Hero ================= */}
@@ -151,32 +158,6 @@ export default async function CategoryPage({ params }) {
             {heroSubtitle}
           </p>
         </section>
-
-        {/* ================= Other Categories ================= */}
-        {otherCategories.length > 0 && (
-          <section className="mt-4">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-              Other Categories
-            </p>
-            <div className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4 py-1 sm:mx-0 sm:px-0">
-              {otherCategories.map((c) => (
-                <Link
-                  key={c.slug}
-                  href={`/category/${c.slug}`}
-                  className="shrink-0 rounded-full bg-slate-100 px-[18px] py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-200"
-                >
-                  {c.label}
-                </Link>
-              ))}
-              <Link
-                href="/"
-                className="shrink-0 rounded-full bg-slate-100 px-[18px] py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-200"
-              >
-                All Apps
-              </Link>
-            </div>
-          </section>
-        )}
 
         {/* ================= App Grid ================= */}
         <section className="mt-4 pb-6">
@@ -205,6 +186,32 @@ export default async function CategoryPage({ params }) {
             </p>
           )}
         </section>
+
+        {/* ================= Other Categories (internal linking) ================= */}
+        {otherCategories.length > 0 && (
+          <section className="mb-6">
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+              Explore Other Categories
+            </p>
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+              {otherCategories.map((c) => (
+                <Link
+                  key={c.slug}
+                  href={`/category/${c.slug}`}
+                  className="flex items-center justify-center whitespace-nowrap rounded-xl bg-emerald-50 px-1.5 py-3.5 text-center text-xs font-bold text-emerald-700 transition hover:bg-emerald-100 sm:text-sm"
+                >
+                  {c.label}
+                </Link>
+              ))}
+              <Link
+                href="/"
+                className="flex items-center justify-center whitespace-nowrap rounded-xl bg-slate-100 px-1.5 py-3.5 text-center text-xs font-bold text-slate-700 transition hover:bg-slate-200 sm:text-sm"
+              >
+                All Yono Games
+              </Link>
+            </div>
+          </section>
+        )}
 
         {/* ================= SEO Content ================= */}
         {content?.sections?.length > 0 && (

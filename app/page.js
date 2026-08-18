@@ -7,6 +7,7 @@ import AppCard from "../components/AppCard";
 import CategoryPills from "../components/CategoryPills";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import TelegramFloat from "../components/TelegramFloat";
 
 // `searchParams` usage below means this route is always server-rendered per
 // request (that part can't be cached away without Partial Prerendering).
@@ -336,6 +337,8 @@ export default async function HomePage({ searchParams }) {
 
       {/* ================= Footer ================= */}
       <Footer />
+
+      <TelegramFloat />
     </div>
   );
 }

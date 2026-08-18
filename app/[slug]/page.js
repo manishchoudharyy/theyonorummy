@@ -9,8 +9,18 @@ import StarRating from "../../components/StarRating";
 import LegalAlert from "../../components/LegalAlert";
 import PlatformDisclaimer from "../../components/PlatformDisclaimer";
 import Footer from "../../components/Footer";
+import { NAV_CATEGORIES } from "../../lib/categoryContent";
 
 const SITE_URL = "https://theyonorummy.com";
+
+// Full display name for a category tag — same labels as the navbar
+// (e.g. "rummy" -> "Yono Rummy") with a sensible fallback for any
+// category that isn't one of the main nav ones (e.g. "jaiho", "bet").
+function getCategoryLabel(slug) {
+  const navMatch = NAV_CATEGORIES.find((c) => c.slug === slug.toLowerCase());
+  if (navMatch) return navMatch.label;
+  return `Yono ${slug.charAt(0).toUpperCase()}${slug.slice(1)}`;
+}
 
 const getApp = cache(async (slug) => {
   await dbConnect();
@@ -120,7 +130,7 @@ export default async function AppPage({ params }) {
   const breadcrumbItems = [{ name: "Home", url: SITE_URL }];
   if (app.categories?.[0]) {
     breadcrumbItems.push({
-      name: app.categories[0],
+      name: getCategoryLabel(app.categories[0]),
       url: `${SITE_URL}/category/${app.categories[0]}`,
     });
   }
@@ -194,9 +204,9 @@ export default async function AppPage({ params }) {
               <span>/</span>
               <Link
                 href={`/category/${app.categories[0]}`}
-                className="uppercase hover:text-emerald-600"
+                className="hover:text-emerald-600"
               >
-                {app.categories[0]}
+                {getCategoryLabel(app.categories[0])}
               </Link>
             </>
           )}
@@ -212,16 +222,24 @@ export default async function AppPage({ params }) {
         </h1>
 
         {/* ══════════ CATEGORY TAGS ══════════ */}
-        {app.categories?.length > 0 && (
+        {(app.categories?.length > 0 || app.seo?.keywords?.length > 0) && (
           <div className="mt-2 px-2 flex flex-wrap gap-1.5">
-            {app.categories.map((tag) => (
+            {app.categories?.map((tag) => (
               <Link
                 key={tag}
                 href={`/category/${tag}`}
                 className="rounded-md bg-blue-600 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white hover:bg-blue-700"
               >
-                {tag}
+                {getCategoryLabel(tag)}
               </Link>
+            ))}
+            {app.seo?.keywords?.slice(0, 2).map((keyword) => (
+              <span
+                key={keyword}
+                className="rounded-md bg-slate-600 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white"
+              >
+                {keyword}
+              </span>
             ))}
           </div>
         )}

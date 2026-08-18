@@ -5,7 +5,7 @@ import fs from "fs/promises";
 import path from "path";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { createSessionToken } from "../../lib/adminAuth";
 import dbConnect from "../../lib/db";
 import App from "../../models/App";
@@ -133,6 +133,7 @@ export async function createApp(formData) {
     redirect(`/admin/apps/new?error=${encodeURIComponent(error.message)}`);
   }
 
+  revalidateTag("apps");
   revalidatePath("/");
   revalidatePath("/admin/apps");
   redirect(`/admin/apps/${created._id}?created=1`);
@@ -152,6 +153,7 @@ export async function updateApp(id, formData) {
     redirect(`/admin/apps/${id}?error=${encodeURIComponent(error.message)}`);
   }
 
+  revalidateTag("apps");
   revalidatePath("/");
   revalidatePath("/admin/apps");
   revalidatePath(`/${data.slug}`);
@@ -175,6 +177,7 @@ export async function moveAppPosition(id, direction) {
   await App.findByIdAndUpdate(app._id, { position: neighbor.position });
   await App.findByIdAndUpdate(neighbor._id, { position: app.position });
 
+  revalidateTag("apps");
   revalidatePath("/");
   revalidatePath("/admin/apps");
 }
@@ -184,6 +187,7 @@ export async function deleteApp(id) {
 
   const app = await App.findByIdAndDelete(id).lean();
 
+  revalidateTag("apps");
   revalidatePath("/");
   revalidatePath("/admin/apps");
   if (app?.slug) revalidatePath(`/${app.slug}`);

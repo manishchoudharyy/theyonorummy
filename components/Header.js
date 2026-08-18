@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const navLinks = [
   { label: "Yono Rummy", href: "/category/rummy" },
@@ -39,9 +40,12 @@ export default function Header() {
               href="/"
               className="flex items-center gap-2 rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
             >
-              <img
+              <Image
                 src="/logo.webp"
                 alt="The Yono Rummy"
+                width={32}
+                height={32}
+                priority
                 className="h-8 w-8 rounded-[10px] object-cover"
               />
               <span className="text-lg font-bold text-slate-900">The Yono Rummy</span>
@@ -129,9 +133,11 @@ export default function Header() {
             onClick={() => setOpen(false)}
             className="flex items-center gap-2"
           >
-            <img
+            <Image
               src="/logo.webp"
               alt="TheYonoRummy"
+              width={32}
+              height={32}
               className="h-8 w-8 rounded-[10px] object-cover"
             />
             <span className="text-lg font-bold text-slate-900">The Yono Rummy</span>

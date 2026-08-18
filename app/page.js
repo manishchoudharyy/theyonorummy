@@ -1,11 +1,32 @@
 import Link from "next/link";
 import Image from "next/image";
+import { unstable_cache } from "next/cache";
 import dbConnect from "../lib/db";
 import App from "../models/App";
 import AppCard from "../components/AppCard";
 import CategoryPills from "../components/CategoryPills";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+
+// `searchParams` usage below means this route is always server-rendered per
+// request (that part can't be cached away without Partial Prerendering).
+// What we CAN cache is the expensive part: the MongoDB round trip. This was
+// measured at ~960ms TTFB on every homepage request (vs 120-170ms on the
+// already-ISR-cached category/app pages) because every single visit and
+// every Googlebot crawl re-ran the same query live. Caching the query
+// result for 5 minutes, keyed by the actual filter, fixes that without
+// touching how search/category filtering behaves.
+const getHomeApps = unstable_cache(
+  async (query) => App.find(query).sort({ position: 1 }).lean(),
+  ["home-apps"],
+  { revalidate: 300, tags: ["apps"] }
+);
+
+const getHomeCategories = unstable_cache(
+  async () => App.distinct("categories", { isActive: true }),
+  ["home-categories"],
+  { revalidate: 300, tags: ["apps"] }
+);
 
 const SITE_URL = "https://theyonorummy.com";
 
@@ -102,8 +123,8 @@ export default async function HomePage({ searchParams }) {
   const query = conditions.length > 1 ? { $and: conditions } : conditions[0];
 
   const [apps, distinctCategories] = await Promise.all([
-    App.find(query).sort({ position: 1 }).lean(),
-    App.distinct("categories", { isActive: true }),
+    getHomeApps(query),
+    getHomeCategories(),
   ]);
 
   const categories = ["All", ...distinctCategories];

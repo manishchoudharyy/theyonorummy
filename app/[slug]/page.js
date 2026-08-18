@@ -29,7 +29,7 @@ export async function generateMetadata({ params }) {
   if (!app) return {};
 
   const title =
-    app.seo?.metaTitle || `${app.name} APK Download — ${app.bonus} Bonus | TheYonoRummy`;
+    app.seo?.metaTitle || `${app.name} APK Download — ${app.bonus} Bonus | The Yono Rummy`;
   const description =
     app.seo?.metaDescription ||
     `Download ${app.name} and get ${app.bonus} signup bonus. ${app.appSize}. Min withdrawal ₹${app.minWithdraw}.`;
@@ -44,7 +44,7 @@ export async function generateMetadata({ params }) {
       title,
       description,
       url,
-      siteName: "TheYonoRummy",
+      siteName: "The Yono Rummy",
       images: [{ url: app.logo, width: 512, height: 512, alt: app.name }],
       locale: "en_IN",
       type: "website",
@@ -103,7 +103,7 @@ export default async function AppPage({ params }) {
   const softwareApplicationNode = {
     "@type": "SoftwareApplication",
     name: app.name,
-    operatingSystem: "ANDROID",
+    operatingSystem: "Android",
     applicationCategory: "GameApplication",
     url: `${SITE_URL}/${app.slug}`,
     image: app.logo.startsWith("http") ? app.logo : `${SITE_URL}${app.logo}`,
@@ -152,12 +152,15 @@ export default async function AppPage({ params }) {
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
           <Link href="/" className="flex items-center gap-2">
-            <img
+            <Image
               src="/logo.webp"
-              alt="TheYonoRummy"
+              alt="The Yono Rummy"
+              width={28}
+              height={28}
+              priority
               className="h-7 w-7 rounded-lg object-cover"
             />
-            <span className="text-base font-bold text-slate-900">TheYonoRummy</span>
+            <span className="text-base font-bold text-slate-900">The Yono Rummy</span>
           </Link>
           <Link
             href="/"

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
-import { moveAppPosition, deleteApp } from "../app/admin/actions";
+import { moveAppPosition, setAppPosition, deleteApp } from "../app/admin/actions";
 import Toast from "./Toast";
 
 export default function AppsTable({ apps, justUpdated }) {
@@ -26,6 +26,11 @@ export default function AppsTable({ apps, justUpdated }) {
     return () => clearTimeout(timer);
   }, [toast]);
 
+  // Positions can have gaps (e.g. after old deletions), so the true last
+  // slot isn't always the same as the number of apps — use the highest
+  // actual position value as the input's upper bound instead.
+  const maxPosition = apps.reduce((max, app) => Math.max(max, app.position), apps.length);
+
   const query = search.trim().toLowerCase();
   const filteredApps = query
     ? apps.filter(
@@ -42,6 +47,22 @@ export default function AppsTable({ apps, justUpdated }) {
         await moveAppPosition(id, direction);
       } catch (error) {
         setToast({ type: "error", message: "Couldn't reorder that app. Try again." });
+      }
+    });
+  };
+
+  const handleSetPosition = (id, name, rawValue, inputEl) => {
+    const value = Number(rawValue);
+    if (!value || value < 1) {
+      if (inputEl) inputEl.value = "";
+      return;
+    }
+    startTransition(async () => {
+      try {
+        await setAppPosition(id, value);
+        setToast({ type: "success", message: `Moved "${name}" to position ${value}.` });
+      } catch (error) {
+        setToast({ type: "error", message: `Couldn't move "${name}". Try again.` });
       }
     });
   };
@@ -108,7 +129,29 @@ export default function AppsTable({ apps, justUpdated }) {
                         </button>
                       </>
                     )}
-                    <span className="ml-1 text-xs text-slate-400">{app.position}</span>
+                    <input
+                      key={app.position}
+                      type="number"
+                      min={1}
+                      max={maxPosition}
+                      disabled={isPending}
+                      defaultValue={app.position}
+                      title="Type a position and press Enter to move this app there"
+                      onKeyDown={(e) => {
+                        // Submission itself happens in onBlur below — this
+                        // just moves focus away so Enter doesn't also fire
+                        // a second, duplicate submit.
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          e.currentTarget.blur();
+                        }
+                      }}
+                      onBlur={(e) => {
+                        if (Number(e.currentTarget.value) === app.position) return;
+                        handleSetPosition(app._id, app.name, e.currentTarget.value, e.currentTarget);
+                      }}
+                      className="ml-1 w-12 rounded border border-slate-200 px-1 py-0.5 text-center text-xs text-slate-600 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
+                    />
                   </div>
                 </td>
                 <td className="px-4 py-3 font-semibold text-slate-900">{app.name}</td>

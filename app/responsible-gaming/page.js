@@ -54,7 +54,7 @@ export default function ResponsibleGamingPage() {
       </div>
 
       <div>
-        <h2>Check your state's rules</h2>
+        <h2>Check your state&apos;s rules</h2>
         <p className="mt-1.5">
           Real-money card games are restricted or banned by the government
           in: <strong>{bannedStates.join(", ")}</strong>. Confirm your
@@ -65,7 +65,7 @@ export default function ResponsibleGamingPage() {
       <div>
         <h2>If you need support</h2>
         <p className="mt-1.5">
-          KIRAN, the national mental health helpline run by India's
+          KIRAN, the national mental health helpline run by India&apos;s
           Ministry of Social Justice and Empowerment, is free and
           available at{" "}
           <a href="tel:18005990019" className="font-semibold text-emerald-600 hover:underline">

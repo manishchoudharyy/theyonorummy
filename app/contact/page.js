@@ -23,7 +23,7 @@ export default function ContactPage() {
       </p>
       <p>
         For app-specific issues such as withdrawal delays or account
-        problems, contact that app's own support team directly.
+        problems, contact that app&apos;s own support team directly.
         TheYonoRummy does not operate any of the listed apps and cannot
         access your account or transaction details on any of them.
       </p>

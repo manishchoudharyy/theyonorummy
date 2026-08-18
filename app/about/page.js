@@ -1,3 +1,4 @@
+import Link from "next/link";
 import LegalPage from "../../components/LegalPage";
 
 export const metadata = {
@@ -23,15 +24,15 @@ export default function AboutPage() {
       <p>
         We do not own, build, or operate any of the apps listed on this
         site. TheYonoRummy works as an independent directory. When you
-        download an app through a link here, you go directly to that app's
+        download an app through a link here, you go directly to that app&apos;s
         own registration process, and that app is responsible for its own
         service, support, and terms.
       </p>
       <p>
         Real-money gaming carries financial risk. Read our{" "}
-        <a href="/responsible-gaming" className="font-semibold text-emerald-600 hover:underline">
+        <Link href="/responsible-gaming" className="font-semibold text-emerald-600 hover:underline">
           Responsible Gaming
-        </a>{" "}
+        </Link>{" "}
         page before you download anything, and check whether real-money
         card games are allowed in your state.
       </p>

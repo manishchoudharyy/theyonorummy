@@ -38,7 +38,7 @@ export default function TermsPage() {
           We list bonus amounts, minimum withdrawal figures, and other
           details as reported by each app at the time of listing. These
           can change without notice. We do not guarantee any bonus,
-          payout, or winning, and we are not responsible for an app's
+          payout, or winning, and we are not responsible for an app&apos;s
           decision to change its terms, delay a withdrawal, or close an
           account.
         </p>

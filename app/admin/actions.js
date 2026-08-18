@@ -182,6 +182,47 @@ export async function moveAppPosition(id, direction) {
   revalidatePath("/admin/apps");
 }
 
+// Move an app straight to an arbitrary position, shifting everything
+// between its old and new spot by one to keep positions dense (1..N) with
+// no gaps or duplicates.
+export async function setAppPosition(id, newPosition) {
+  await dbConnect();
+
+  const app = await App.findById(id).lean();
+  if (!app) return;
+
+  // Clamp against the real highest position value in the collection, not
+  // the document count — the two can drift apart if positions ever end up
+  // with gaps (e.g. from an app being deleted), so count alone could stop
+  // an admin short of the true last slot.
+  const highest = await App.findOne({}).sort({ position: -1 }).select("position").lean();
+  const maxPosition = highest?.position || 1;
+  const target = Math.max(1, Math.min(Math.round(Number(newPosition)) || 1, maxPosition));
+  const current = app.position;
+
+  if (target === current) return;
+
+  if (target < current) {
+    // Moving earlier: everything from target..current-1 shifts down by one.
+    await App.updateMany(
+      { position: { $gte: target, $lt: current } },
+      { $inc: { position: 1 } }
+    );
+  } else {
+    // Moving later: everything from current+1..target shifts up by one.
+    await App.updateMany(
+      { position: { $gt: current, $lte: target } },
+      { $inc: { position: -1 } }
+    );
+  }
+
+  await App.findByIdAndUpdate(app._id, { position: target });
+
+  revalidateTag("apps");
+  revalidatePath("/");
+  revalidatePath("/admin/apps");
+}
+
 export async function deleteApp(id) {
   await dbConnect();
 

@@ -22,9 +22,9 @@ export default function PrivacyPolicyPage() {
       </p>
       <p>
         When you tap Download on an app listed here, you are redirected to
-        that app's own registration page through a referral link. That
+        that app&apos;s own registration page through a referral link. That
         link tells the app you came from TheYonoRummy. Once you reach the
-        app itself, that app's own privacy policy applies to any
+        app itself, that app&apos;s own privacy policy applies to any
         information you give it, including your mobile number and OTP. We
         do not receive or store that information.
       </p>
